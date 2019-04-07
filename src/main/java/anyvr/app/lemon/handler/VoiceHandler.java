@@ -44,7 +44,7 @@ public class VoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerVoice> 
     protected void channelRead0(final ChannelHandlerContext ctx, final Spec.PlayerVoice playerVoice) throws Exception {
 
         logger.info("UUID: " + playerVoice.getUuid());
-        logger.info("Audio: " + Arrays.toString(playerVoice.getVoice().toByteArray()));;
+        logger.info("Audio: " + Arrays.toString(playerVoice.getVoice().toByteArray()));
 
         for (Channel channel : channels) {
             if (ctx.channel() != channel) {
@@ -55,7 +55,6 @@ public class VoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerVoice> 
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        System.out.println("ChannelRead0");
         cause.printStackTrace();
         ctx.close();
     }
