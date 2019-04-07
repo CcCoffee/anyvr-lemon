@@ -9,3 +9,5 @@ bin/
 *.iml
 Spec.java
 *.log
+.classpath
+.project
