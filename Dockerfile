@@ -2,6 +2,7 @@ FROM gradle:jdk11 AS build
 
 COPY --chown=gradle:gradle . /app
 WORKDIR /app
+USER root
 RUN apt-get update && \
     	apt-get install -y git autoconf automake libtool gcc make openjdk-11-jdk g++ && \
     	git clone https://github.com/xiph/opus.git && \
@@ -10,6 +11,7 @@ RUN apt-get update && \
     	bash autogen.sh && \
     	./configure && \
     	make install
+USER gradle
 RUN gradle clean build
 
 
