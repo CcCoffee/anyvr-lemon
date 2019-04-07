@@ -22,4 +22,5 @@ COPY --from=build /app/build/libs/anyvr-lemon.jar /app/anyvr-lemon.jar
 COPY --from=build /app/libs/libopusjni.so /app/libs/libopusjni.so
 RUN ls -la /app/libs
 RUN ls -la /opt/java/openjdk/
+RUN ls -la /usr/lib/jvm/
 ENTRYPOINT ["java","-Djava.library.path=/app/libs","-Xmx200M","-Xms20M","-jar","anyvr-lemon.jar", "0.0.0.0", "7000"]
