@@ -1,4 +1,4 @@
-FROM gradle:jdk11
+FROM gradle:jdk11 AS build
 
 COPY --chown=gradle:gradle . /app
 WORKDIR /app
@@ -13,7 +13,9 @@ RUN apt-get update && \
     	make install
 RUN gradle clean build
 
+
 FROM openjdk:11
+
 WORKDIR /app
 COPY --from=build /app/build/libs/anyvr-lemon.jar /app/anyvr-lemon.jar
 COPY --from=build /app/libs /app/libs
