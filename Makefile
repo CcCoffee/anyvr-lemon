@@ -1,7 +1,6 @@
 # Installs submodules and dependencies.
 install:
 	git submodule update --init --recursive
-	./gradlew clean build
 
 # Generates java file from the protobuf-spec.
 generate:
