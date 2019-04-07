@@ -11,8 +11,7 @@ RUN apt-get update && \
     	bash autogen.sh && \
     	./configure && \
     	make install
-
-#RUN gradle clean build
+RUN gradle clean build
 #FROM openjdk:11
 #WORKDIR /app
 #COPY --from=build /app/build/libs/anyvr-lemon.jar /app/anyvr-lemon.jar
