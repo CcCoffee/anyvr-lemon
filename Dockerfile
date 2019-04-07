@@ -21,4 +21,5 @@ WORKDIR /app
 COPY --from=build /app/build/libs/anyvr-lemon.jar /app/anyvr-lemon.jar
 COPY --from=build /app/libs/libopusjni.so /app/libs/libopusjni.so
 RUN ls -la /app/libs
+RUN echo $JAVA_HOME
 ENTRYPOINT ["java","-Djava.library.path=/app/libs","-Xmx200M","-Xms20M","-jar","anyvr-lemon.jar", "0.0.0.0", "7000"]
