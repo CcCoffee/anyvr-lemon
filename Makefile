@@ -1,0 +1,8 @@
+# Installs submodules and dependencies.
+install:
+	git submodule update --init --recursive
+	./gradlew clean build
+
+# Generates java file from the protobuf-spec.
+generate:
+	cd anyvr-protobuf-spec && protoc --java_out=../src/main/java/anyvr/app/lemon/generated spec.proto
