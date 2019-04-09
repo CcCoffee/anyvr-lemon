@@ -16,11 +16,11 @@ public class VoiceStreamingServer {
 
     public static void main(String[] args) {
 
-        final long decoder = Opus.decoder_create(SAMPLE_RATE, CHANNELS);
-
-        if (decoder == 0) {
-            System.err.println("Creating Decoder Error");
-        }
+//        final long decoder = Opus.decoder_create(SAMPLE_RATE, CHANNELS);
+//
+//        if (decoder == 0) {
+//            System.err.println("Creating Decoder Error");
+//        }
 
         ServerBootstrap bootStrap = new ServerBootstrap();
         bootStrap.group(new DefaultEventLoop())
