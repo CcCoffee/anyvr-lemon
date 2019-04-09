@@ -14,6 +14,7 @@ WORKDIR /app
 RUN apt-get install -y git autoconf automake libtool gcc make openjdk-11-jdk
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 RUN ls -la /usr/local/lib/
+RUN ls -la /app/libs
 RUN ./gradlew clean build
 ENTRYPOINT ["java","-Djava.library.path=/app/libs","-Xmx200M","-Xms20M","-jar","build/libs/anyvr-lemon.jar", "0.0.0.0", "7000"]
 
