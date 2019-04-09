@@ -1,4 +1,4 @@
-FROM gradle:jdk11
+FROM gradle:jdk11 as build
 USER root
 RUN apt-get update && apt-get install -y git autoconf automake libtool gcc make g++ && \
     	git clone https://github.com/xiph/opus.git && \
