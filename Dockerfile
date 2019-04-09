@@ -23,7 +23,8 @@ USER root
 WORKDIR /app
 COPY --from=build /app/build/libs/anyvr-lemon.jar /app/anyvr-lemon.jar
 COPY --from=build /app/libs/libopusjni.so /app/libs/libopusjni.so
-RUN ls -la /usr/lib/jvm/
+RUN ls -la /app
+RUN ls -la /app/libs
 RUN echo $JAVA_HOME
 RUN ls $JAVA_HOME/include
 RUN ls $JAVA_HOME/include/linux
