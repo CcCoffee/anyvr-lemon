@@ -73,7 +73,7 @@ model {
             libs(PrebuiltLibraries) {
                 opus {
                     binaries.withType(PrebuiltSharedLibraryBinary) {
-                        sharedLibraryFile = file("/usr/local/lib/libopus.so")
+                        sharedLibraryFile = file("/usr/local/lib/libopus.so.0.7.0")
                     }
                 }
             }
