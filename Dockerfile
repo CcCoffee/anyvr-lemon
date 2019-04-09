@@ -9,8 +9,8 @@ RUN apt-get install -y git autoconf automake libtool gcc make openjdk-11-jdk g++
     	bash autogen.sh && \
     	./configure && \
     	make install
-COPY . /usr/anyvr-lemon
-WORKDIR /usr/anyvr-lemon
+COPY . /app
+WORKDIR /app
 RUN apt-get install -y git autoconf automake libtool gcc make openjdk-11-jdk
 RUN echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
 RUN echo $JAVA_HOME
