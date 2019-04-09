@@ -25,7 +25,7 @@ FROM openjdk:11
 WORKDIR /app
 COPY --from=build /app/build/libs/anyvr-lemon.jar /app/anyvr-lemon.jar
 COPY --from=build /app/libs/libopusjni.so /app/libs/libopusjni.so
-COPY --from=build /usr/local/lib/*.so* /usr/local/libs/
+COPY --from=build /usr/local/lib/* /usr/local/libs/
 RUN ls -la /usr/local/libs
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 ENV LD_LIBRARY_PATH /app/libs:/usr/local/lib/
