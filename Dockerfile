@@ -34,4 +34,4 @@ ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 RUN echo $JAVA_HOME
 #RUN ls $JAVA_HOME/include
 #RUN ls $JAVA_HOME/include/linux
-#ENTRYPOINT ["java","-Djava.library.path=/app/libs","-Xmx200M","-Xms20M","-jar","anyvr-lemon.jar", "0.0.0.0", "7000"]
+ENTRYPOINT ["java","-Djava.library.path=/app/libs","-Xmx200M","-Xms20M","-jar","anyvr-lemon.jar", "0.0.0.0", "7000"]
