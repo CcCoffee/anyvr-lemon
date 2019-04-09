@@ -22,9 +22,9 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:openjdk-r/ppa && apt-get update
 RUN apt-get install -y git autoconf automake libtool gcc make openjdk-11-jdk
-RUN echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
 COPY --from=build /app/build/libs/anyvr-lemon.jar /app/anyvr-lemon.jar
 COPY --from=build /app/libs/libopusjni.so /app/libs/libopusjni.so
+ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 #RUN echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
 #RUN ls -la /app
 #RUN ls -la /app/libs
