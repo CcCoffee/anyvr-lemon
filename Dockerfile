@@ -1,13 +1,13 @@
 FROM gradle:jdk11
 USER root
-RUN apt-get install -y git autoconf automake libtool gcc make g++ && \
+RUN apt-get update && apt-get install -y git autoconf automake libtool gcc make g++ && \
     	git clone https://github.com/xiph/opus.git && \
     	cd opus/ && \
     	git checkout v1.3 && \
     	bash autogen.sh && \
     	./configure && \
     	make install
-USER gradle
+#USER gradle
 COPY --chown=gradle:gradle . /app
 WORKDIR /app
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
