@@ -2,10 +2,18 @@ FROM ubuntu:latest AS build
 
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:openjdk-r/ppa && apt-get update
+RUN apt-get install -y git autoconf automake libtool gcc make openjdk-11-jdk g++ && \
+    	git clone https://github.com/xiph/opus.git && \
+    	cd opus/ && \
+    	git checkout v1.3 && \
+    	bash autogen.sh && \
+    	./configure && \
+    	make install
 COPY . /usr/anyvr-lemon
 WORKDIR /usr/anyvr-lemon
 RUN apt-get install -y git autoconf automake libtool gcc make openjdk-11-jdk
 RUN echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
+RUN echo $JAVA_HOME
 RUN ./gradlew clean build
 
 
