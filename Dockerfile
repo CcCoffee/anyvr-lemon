@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM gradle:jdk11
 
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:openjdk-r/ppa && apt-get update
@@ -9,17 +9,17 @@ RUN apt-get install -y git autoconf automake libtool gcc make openjdk-11-jdk g++
     	bash autogen.sh && \
     	./configure && \
     	make install
-COPY . /app
+COPY --chown=gradle:gradle . /app
 WORKDIR /app
-RUN apt-get install -y git autoconf automake libtool gcc make openjdk-11-jdk
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 RUN ls -la /usr/local/lib/
 RUN ./gradlew clean build
 RUN ls -la /app/libs
 RUN ls -la /app
 RUN ls -la /app/build/libs/opusjni/shared
-ENV LD_LIBRARY_PATH /app/libs:/usr/local/lib/
-ENTRYPOINT ["java","-jar","build/libs/anyvr-lemon.jar", "0.0.0.0", "7000"]
+
+#ENV LD_LIBRARY_PATH /app/libs:/usr/local/lib/
+#ENTRYPOINT ["java","-jar","build/libs/anyvr-lemon.jar", "0.0.0.0", "7000"]
 
 
 #FROM ubuntu:latest
