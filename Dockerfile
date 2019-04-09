@@ -17,7 +17,7 @@ RUN ls -la /usr/local/lib/
 RUN ./gradlew clean build
 RUN ls -la /app/libs
 RUN ls -la /app
-RUN ls -la /app/build/libs
+RUN ls -la /app/build/libs/opusjni/shared
 ENTRYPOINT ["java","-Djava.library.path=/app/libs","-Xmx200M","-Xms20M","-jar","build/libs/anyvr-lemon.jar", "0.0.0.0", "7000"]
 
 
