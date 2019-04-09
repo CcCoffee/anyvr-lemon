@@ -51,12 +51,12 @@ public class Opus {
      * Loads the native JNI library.
      */
     static {
-        try {
-            System.loadLibrary("opusjni");
-        } catch (Error | Exception e) {
-            System.out.println("***********************************************************************************");
-            System.out.println("*** Failed to load JNI bridge library: " + e.toString());
-        }
+//        try {
+//            System.loadLibrary("opusjni");
+//        } catch (Error | Exception e) {
+//            System.out.println("***********************************************************************************");
+//            System.out.println("*** Failed to load JNI bridge library: " + e.toString());
+//        }
     }
 
     /**
