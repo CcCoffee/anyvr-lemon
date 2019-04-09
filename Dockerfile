@@ -1,6 +1,6 @@
 FROM gradle:jdk11
 USER root
-#RUN apt-get update && apt-get install -y software-properties-common
+RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:openjdk-r/ppa && apt-get update
 RUN apt-get install -y git autoconf automake libtool gcc make openjdk-11-jdk g++ && \
     	git clone https://github.com/xiph/opus.git && \
