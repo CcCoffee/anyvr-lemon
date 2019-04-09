@@ -28,7 +28,7 @@ COPY --from=build /app/libs/libopusjni.so /app/libs/libopusjni.so
 COPY --from=build /usr/local/lib/* /usr/local/libs/
 RUN ls -la /usr/local/libs
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
-ENV LD_LIBRARY_PATH /app/libs:/usr/local/lib/
+ENV LD_LIBRARY_PATH /app/libs:/usr/local/libs
 ##RUN echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
 ##RUN ls -la /app
 ##RUN ls -la /app/libs
