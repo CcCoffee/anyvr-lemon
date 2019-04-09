@@ -1,28 +1,22 @@
-FROM gradle:jdk11 AS build
+FROM ubuntu:latest AS build
 
-COPY --chown=gradle:gradle . /app
+RUN apt-get update && apt-get install -y software-properties-common
+RUN add-apt-repository ppa:openjdk-r/ppa && apt-get update
+COPY . /usr/anyvr-lemon
+WORKDIR /usr/anyvr-lemon
+RUN apt-get install -y git autoconf automake libtool gcc make openjdk-11-jdk
+RUN echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
+RUN ./gradlew clean build
+
+
+FROM ubuntu:latest
 WORKDIR /app
-USER root
-RUN apt-get update && \
-    	apt-get install -y git autoconf automake libtool gcc make openjdk-11-jdk g++ && \
-    	git clone https://github.com/xiph/opus.git && \
-    	cd opus/ && \
-    	git checkout v1.3 && \
-    	bash autogen.sh && \
-    	./configure && \
-    	make install
-USER gradle
-RUN gradle clean build
-
-
-FROM openjdk:11
-
-#RUN echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
-#RUN bash
-USER root
-WORKDIR /app
+RUN apt-get update && apt-get install -y software-properties-common
+RUN add-apt-repository ppa:openjdk-r/ppa && apt-get update
+RUN apt-get install -y openjdk-11-jdk
 COPY --from=build /app/build/libs/anyvr-lemon.jar /app/anyvr-lemon.jar
 COPY --from=build /app/libs/libopusjni.so /app/libs/libopusjni.so
+RUN echo "export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64" >> ~/.bashrc
 RUN ls -la /app
 RUN ls -la /app/libs
 RUN chmod 777 /app
