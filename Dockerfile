@@ -25,6 +25,9 @@ COPY --from=build /app/build/libs/anyvr-lemon.jar /app/anyvr-lemon.jar
 COPY --from=build /app/libs/libopusjni.so /app/libs/libopusjni.so
 RUN ls -la /app
 RUN ls -la /app/libs
+RUN chmod 777 /app
+RUN chmod 777 /app/libs
+RUN chmod 777 /app/libs/libopusjni.so
 RUN echo $JAVA_HOME
 RUN ls $JAVA_HOME/include
 RUN ls $JAVA_HOME/include/linux
