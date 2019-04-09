@@ -38,68 +38,68 @@ jar {
     }
 }
 
-//task copyOpusNativeLib(type: Copy) {
-//    if (OperatingSystem.current().isMacOsX()) {
-//        from file("$buildDir/libs/opusjni/shared/libopusjni.dylib")
-//        into file("libs")
-//    } else if (OperatingSystem.current().isLinux()) {
-//        from file("$buildDir/libs/opusjni/shared/libopusjni.so")
-//        into file("libs")
-//    }
-//}
-//
-//model {
-//    platforms {
-//        os_x {
-//            architecture 'x86_64'
-//            operatingSystem 'mac os x'
-//        }
-//        linux_amd64 {
-//            architecture 'amd64'
-//            operatingSystem 'linux'
-//        }
-//    }
-//
-//    repositories {
-//        if (OperatingSystem.current().isMacOsX()) {
-//            libs(PrebuiltLibraries) {
-//                opus {
-//                    binaries.withType(PrebuiltSharedLibraryBinary) {
-//                        sharedLibraryFile = file("/usr/local/Cellar/opus/1.3/lib/libopus.dylib")
-//                    }
-//                }
-//            }
-//        } else if (OperatingSystem.current().isLinux()) {
-//            libs(PrebuiltLibraries) {
-//                opus {
-//                    binaries.withType(PrebuiltSharedLibraryBinary) {
-//                        sharedLibraryFile = file("/usr/local/lib/libopus.so.0.7.0")
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    components {
-//        if (OperatingSystem.current().isMacOsX()) {
-//            opusjni(NativeLibrarySpec) {
-//                binaries.all {
-//                    lib library: 'opus', linkage: 'shared'
-//                    cCompiler.args '-I', "${Jvm.current().javaHome}/include"
-//                    cCompiler.args '-I', "${Jvm.current().javaHome}/include/darwin"
-//                }
-//            }
-//        } else if(OperatingSystem.current().isLinux()) {
-//            opusjni(NativeLibrarySpec) {
-//                binaries.all {
-//                    lib library: 'opus', linkage: 'shared'
-//                    cCompiler.args '-I', "${Jvm.current().javaHome}/include"
-//                    cCompiler.args '-I', "${Jvm.current().javaHome}/include/linux"
-//                }
-//            }
-//        }
-//    }
-//}
+task copyOpusNativeLib(type: Copy) {
+    if (OperatingSystem.current().isMacOsX()) {
+        from file("$buildDir/libs/opusjni/shared/libopusjni.dylib")
+        into file("libs")
+    } else if (OperatingSystem.current().isLinux()) {
+        from file("$buildDir/libs/opusjni/shared/libopusjni.so")
+        into file("libs")
+    }
+}
 
-//build.dependsOn 'copyOpusNativeLib'
-//copyOpusNativeLib.mustRunAfter 'opusjniSharedLibrary'
+model {
+    platforms {
+        os_x {
+            architecture 'x86_64'
+            operatingSystem 'mac os x'
+        }
+        linux_amd64 {
+            architecture 'amd64'
+            operatingSystem 'linux'
+        }
+    }
+
+    repositories {
+        if (OperatingSystem.current().isMacOsX()) {
+            libs(PrebuiltLibraries) {
+                opus {
+                    binaries.withType(PrebuiltSharedLibraryBinary) {
+                        sharedLibraryFile = file("/usr/local/Cellar/opus/1.3/lib/libopus.dylib")
+                    }
+                }
+            }
+        } else if (OperatingSystem.current().isLinux()) {
+            libs(PrebuiltLibraries) {
+                opus {
+                    binaries.withType(PrebuiltSharedLibraryBinary) {
+                        sharedLibraryFile = file("/usr/local/lib/libopus.so.0.7.0")
+                    }
+                }
+            }
+        }
+    }
+
+    components {
+        if (OperatingSystem.current().isMacOsX()) {
+            opusjni(NativeLibrarySpec) {
+                binaries.all {
+                    lib library: 'opus', linkage: 'shared'
+                    cCompiler.args '-I', "${Jvm.current().javaHome}/include"
+                    cCompiler.args '-I', "${Jvm.current().javaHome}/include/darwin"
+                }
+            }
+        } else if(OperatingSystem.current().isLinux()) {
+            opusjni(NativeLibrarySpec) {
+                binaries.all {
+                    lib library: 'opus', linkage: 'shared'
+                    cCompiler.args '-I', "${Jvm.current().javaHome}/include"
+                    cCompiler.args '-I', "${Jvm.current().javaHome}/include/linux"
+                }
+            }
+        }
+    }
+}
+
+build.dependsOn 'copyOpusNativeLib'
+copyOpusNativeLib.mustRunAfter 'opusjniSharedLibrary'
