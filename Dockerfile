@@ -16,7 +16,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 RUN ls -la /usr/local/lib/
 RUN ls -la /app/libs
 RUN ls -la /app
-RUN ls -la /app/build/shared
+RUN ls -la /app/build
 RUN ./gradlew clean build
 ENTRYPOINT ["java","-Djava.library.path=/app/libs","-Xmx200M","-Xms20M","-jar","build/libs/anyvr-lemon.jar", "0.0.0.0", "7000"]
 
