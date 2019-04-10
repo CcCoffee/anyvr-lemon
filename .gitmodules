@@ -1,0 +1,3 @@
+[submodule "src/main/java/anyvr/app/lemon/generated/protobuf"]
+	path = src/main/java/anyvr/app/lemon/generated/protobuf
+	url = git@github.com:codeuniversity/anyvr-protobuf-spec-java.git
