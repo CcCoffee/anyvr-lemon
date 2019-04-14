@@ -19,5 +19,4 @@ Before running this service, you have to generate a Java file first:
 
 ```shell
 make install
-make generate
 ```
