@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-#!/bin/bash
-if [ "$(docker ps -aq -f name=anyvr)" ]; then
-        if [ "$(docker ps -q -f name=anyvr)" ]; then  # check if docker container currently running
+if [ "$(docker ps -aq -f name=anyvr-lemon)" ]; then
+        if [ "$(docker ps -q -f name=anyvr-lemon)" ]; then  # check if docker container currently running
                 docker stop anyvr-lemon
         fi
         docker rm anyvr
