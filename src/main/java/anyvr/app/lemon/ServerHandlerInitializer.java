@@ -14,6 +14,11 @@ import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 public class ServerHandlerInitializer extends ChannelInitializer<Channel> {
+    private long opusDecoder;
+
+    public ServerHandlerInitializer(final long opusDecoder) {
+        this.opusDecoder = opusDecoder;
+    }
 
     @Override
     protected void initChannel(Channel ch) throws Exception {
@@ -22,7 +27,7 @@ public class ServerHandlerInitializer extends ChannelInitializer<Channel> {
         p.addLast(new ReadTimeoutHandler(10));
         p.addLast(new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, 10000, 0, 4, 0, 4, true));
         p.addLast(new ProtobufDecoder(Spec.PlayerVoice.getDefaultInstance()));
-        p.addLast(new VoiceHandler());
+        p.addLast(new VoiceHandler(opusDecoder));
 
         p.addLast(new ProtobufIntLengthPrepender());
         p.addLast(new ProtobufEncoder());

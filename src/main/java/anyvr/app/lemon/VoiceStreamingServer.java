@@ -11,7 +11,7 @@ import io.netty.channel.DefaultEventLoop;
 public class VoiceStreamingServer {
 
     private static Logger logger = LogManager.getLogger(VoiceStreamingServer.class);
-    private static final int SAMPLE_RATE = 48000;
+    private static final int SAMPLE_RATE = 24000;
     private static final int CHANNELS = 1;
 
     public static void main(String[] args) {
@@ -24,7 +24,7 @@ public class VoiceStreamingServer {
 
         ServerBootstrap bootStrap = new ServerBootstrap();
         bootStrap.group(new DefaultEventLoop())
-                .childHandler(new ServerHandlerInitializer());
+                .childHandler(new ServerHandlerInitializer(decoder));
         bootStrap.channel(UdpServerChannel.class);
 
         int port = Integer.parseInt(args[1]);
