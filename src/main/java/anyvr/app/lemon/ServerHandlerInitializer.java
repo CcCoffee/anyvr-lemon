@@ -14,10 +14,8 @@ import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 public class ServerHandlerInitializer extends ChannelInitializer<Channel> {
-    private long opusDecoder;
 
-    public ServerHandlerInitializer(final long opusDecoder) {
-        this.opusDecoder = opusDecoder;
+    public ServerHandlerInitializer() {
     }
 
     @Override
