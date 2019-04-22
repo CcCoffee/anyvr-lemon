@@ -55,7 +55,6 @@ public class UdpServerChannel extends AbstractServerChannel {
         if (!epollAvailabe) {
             ioThreads = 1;
         }
-        epollAvailabe = false;
         logger.info("Threadcount: "+ ioThreads);
         logger.info("EpollAvailable: "+ epollAvailabe);
         group = epollAvailabe ? new EpollEventLoopGroup(ioThreads) : new NioEventLoopGroup(ioThreads);
