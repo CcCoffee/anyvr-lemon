@@ -100,19 +100,19 @@ public class VoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerVoice> 
                     currentPlayer.getChannel().writeAndFlush(playerVoice);
                 });
 
-        synchronized (player.getLock()) {
-            byte[] output = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
-
-            int currentFrameSize = Opus
-                    .decode(player.getAudioDecoder(), playerVoice.getVoice().toByteArray(), 0, playerVoice.getVoice().toByteArray().length, output, 0, MAX_FRAME_SIZE, 0);
-
-            logger.info("Write");
-            byte[] audioStream = new byte[currentFrameSize * CHANNELS * 2];
-            for(int i  = 0; i < currentFrameSize * CHANNELS * 2;i++) {
-                audioStream[i] = output[i];
-            }
-            player.getAudioFile().write(audioStream);
-        }
+//        synchronized (player.getLock()) {
+//            byte[] output = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
+//
+//            int currentFrameSize = Opus
+//                    .decode(player.getAudioDecoder(), playerVoice.getVoice().toByteArray(), 0, playerVoice.getVoice().toByteArray().length, output, 0, MAX_FRAME_SIZE, 0);
+//
+//            logger.info("Write");
+//            byte[] audioStream = new byte[currentFrameSize * CHANNELS * 2];
+//            for(int i  = 0; i < currentFrameSize * CHANNELS * 2;i++) {
+//                audioStream[i] = output[i];
+//            }
+//            player.getAudioFile().write(audioStream);
+//        }
     }
 
     @Override
