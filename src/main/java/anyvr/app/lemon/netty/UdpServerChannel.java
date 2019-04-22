@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import anyvr.app.lemon.handler.VoiceHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.AbstractServerChannel;
@@ -37,6 +41,7 @@ public class UdpServerChannel extends AbstractServerChannel {
     protected final List<Bootstrap> ioBootstraps = new ArrayList<>();
     protected final List<Channel> ioChannels = new ArrayList<>();
     protected final ConcurrentHashMap<InetSocketAddress, UdpChannel> userChannels = new ConcurrentHashMap<>();
+    private final Logger logger = LogManager.getLogger(UdpServerChannel.class);
 
     public UdpServerChannel() throws IOException {
         this(1);
@@ -50,6 +55,8 @@ public class UdpServerChannel extends AbstractServerChannel {
         if (!epollAvailabe) {
             ioThreads = 1;
         }
+        logger.info("Threadcount: "+ ioThreads);
+        logger.info("EpollAvailable: "+ epollAvailabe);
         group = epollAvailabe ? new EpollEventLoopGroup(ioThreads) : new NioEventLoopGroup(ioThreads);
         Class<? extends DatagramChannel> channel = epollAvailabe ? EpollDatagramChannel.class : NioDatagramChannel.class;
         ChannelInitializer<Channel> initializer = new ChannelInitializer<Channel>() {

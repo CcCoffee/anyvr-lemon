@@ -16,7 +16,8 @@ public class VoiceStreamingServer {
         ServerBootstrap bootStrap = new ServerBootstrap();
         bootStrap.group(new DefaultEventLoop())
                 .childHandler(new ServerHandlerInitializer());
-        bootStrap.channel(UdpServerChannel.class);
+        //bootStrap.channel(UdpServerChannel.class);
+        bootStrap.channelFactory(() -> new UdpServerChannel(6));
 
         int port = Integer.parseInt(args[1]);
 

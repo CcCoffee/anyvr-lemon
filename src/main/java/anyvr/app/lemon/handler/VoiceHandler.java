@@ -67,6 +67,8 @@ public class VoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerVoice> 
             throw new NullPointerException("Uuid is null");
         }
 
+        logger.info("Threads: "+ Thread.currentThread().getName());
+        logger.info("Threads: "+ Thread.currentThread().getId());
         logger.info("UUID: " + playerVoice.getUuid());
         logger.info("Audio: " + Arrays.toString(playerVoice.getVoice().toByteArray()));
 
