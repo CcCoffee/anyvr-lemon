@@ -20,7 +20,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerVoice> {
 
-    private final String outPutFileName = "/app";
+    private final String PATH = "/app/";
     private static final int MAX_FRAME_SIZE = 6 * 480;
     private static final int CHANNELS = 1;
     private static final int SAMPLE_RATE = 24000;
@@ -36,7 +36,9 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final Spec.PlayerVoice playerVoice) throws Exception {
-        IsUdpIsInSequence(playerVoice.getDatagramOrderId());
+        if (!IsUdpInSequence(playerVoice.getDatagramOrderId())) {
+            return;
+        }
 
         logger.info("UUID: " + playerVoice.getUuid());
         logger.info("Audio: " + Arrays.toString(playerVoice.getVoice().toByteArray()));
@@ -47,7 +49,7 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
         if (!playerStore.isPlayerAlreadyExist(playerUuid)) {
             final long decoder = Opus.decoder_create(SAMPLE_RATE, CHANNELS);
 
-            String audioFileName = outPutFileName + playerUuid.toString();
+            String audioFileName = PATH + playerUuid.toString();
             Path fileOutput = Paths.get(audioFileName);
             OutputStream audioFile = Files.newOutputStream(fileOutput);
 
@@ -71,7 +73,7 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
         checkIfHaveToFillTheGap(player, playerVoice);
     }
 
-    private boolean IsUdpIsInSequence(int currentDatagrammId) {
+    private boolean IsUdpInSequence(int currentDatagrammId) {
         synchronized (lockDatagramId) {
             if (currentDatagrammId > lastDatagramId) {
                 lastDatagramId = currentDatagrammId;
@@ -86,16 +88,21 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
         synchronized (player.getLock()) {
             byte[] output = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
 
-            int currentFrameSize = Opus
-                    .decode(player.getAudioDecoder(), playerVoice.getVoice().toByteArray(), 0, playerVoice.getVoice().toByteArray().length, output, 0,
-                            MAX_FRAME_SIZE, 0);
-
             if ((player.getLastTimestamp() == 0) || (player.getLastTimestamp() + 20) == playerVoice.getTimestamp()) {
+                int currentFrameSize = Opus
+                        .decode(player.getAudioDecoder(), playerVoice.getVoice().toByteArray(), 0, playerVoice.getVoice().toByteArray().length, output, 0,
+                                MAX_FRAME_SIZE, 0);
+
                 writePlayerAudioFile(currentFrameSize, output, player);
             } else {
                 int fillGapCounter = (int) ((playerVoice.getTimestamp() - player.getLastTimestamp()) / 20);
 
                 for (int i = 0; i < fillGapCounter; i++) {
+
+                    int currentFrameSize = Opus
+                            .decode(player.getAudioDecoder(), null, 0, 0, output, 0,
+                                    MAX_FRAME_SIZE, 0);
+
                     byte[] audioStream = new byte[currentFrameSize * CHANNELS * 2];
                     player.getAudioFile().write(audioStream);
                 }
@@ -105,6 +112,7 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
     }
 
     private void writePlayerAudioFile(int currentFrameSize, byte[] output, Player player) throws IOException {
+
         byte[] audioStream = new byte[currentFrameSize * CHANNELS * 2];
         for (int i = 0; i < currentFrameSize * CHANNELS * 2; i++) {
             audioStream[i] = output[i];
