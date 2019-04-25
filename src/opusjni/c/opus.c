@@ -22,7 +22,7 @@ JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_decode(JNIEnv *env, jclass 
 			input_ = 0;
 			ret = OPUS_OK;
 		}
-		if (OPUS_OK == ret)
+		if (ret == OPUS_OK)
 		{
 			jbyte *output_ = (*env)->GetPrimitiveArrayCritical(env, output, 0);
 
