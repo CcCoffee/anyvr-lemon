@@ -1,55 +1,25 @@
 package anyvr.app.lemon.jni;
 
 public class Opus {
-    /**
-     * Opus fullband constant
-     */
+
     public static final int BANDWIDTH_FULLBAND = 1105;
 
-    /**
-     * Opus mediumband constant
-     */
     public static final int BANDWIDTH_MEDIUMBAND = 1102;
 
-    /**
-     * Opus narrowband constant
-     */
     public static final int BANDWIDTH_NARROWBAND = 1101;
 
-    /**
-     * Opus superwideband constant
-     */
     public static final int BANDWIDTH_SUPERWIDEBAND = 1104;
 
-    /**
-     * Opus wideband constant
-     */
     public static final int BANDWIDTH_WIDEBAND = 1103;
 
-    /**
-     * Opus constant for an invalid packet
-     */
     public static final int INVALID_PACKET = -4;
 
-    /**
-     * The maximum size of a packet we can create. Since we're only creating packets
-     * with a single frame, that's a 1 byte TOC + the maximum frame size. See
-     * http://tools.ietf.org/html/rfc6716#section-3.2
-     */
     public static final int MAX_PACKET = 1 + 1275;
 
-    /**
-     * Constant used to set various settings to "automatic"
-     */
     public static final int OPUS_AUTO = -1000;
 
-    /**
-     * Constant usually indicating that no error occurred
-     */
     public static final int OPUS_OK = 0;
-    /**
-     * Loads the native JNI library.
-     */
+
     static {
         try {
             System.loadLibrary("opusjni");
@@ -59,42 +29,6 @@ public class Opus {
         }
     }
 
-    /**
-     * Asserts that the <tt>Opus</tt> class and the JNI library which supports it
-     * are functional. The method is to be invoked early (e.g. static/class
-     * initializers) by classes which require it (i.e. they depend on it and they
-     * cannot function without it).
-     */
-    public static void assertOpusIsFunctional() {
-        int channels = 1;
-
-        decoder_get_size(channels);
-        encoder_get_size(channels);
-    }
-
-    /**
-     * Decodes an opus packet from <tt>input</tt> into <tt>output</tt>.
-     *
-     * @param decoder         the <tt>OpusDecoder</tt> state to perform the decoding
-     * @param input           an array of <tt>byte</tt>s which represents the input
-     *                        payload to decode. If <tt>null</tt>, indicates packet
-     *                        loss.
-     * @param inputOffset     the offset in <tt>input</tt> at which the payload to
-     *                        be decoded begins
-     * @param inputLength     the length in bytes in <tt>input</tt> beginning at
-     *                        <tt>inputOffset</tt> of the payload to be decoded
-     * @param output          an array of <tt>byte</tt>s into which the decoded
-     *                        signal is to be output
-     * @param outputOffset    the offset in <tt>output</tt> at which the output of
-     *                        the decoded signal is to begin
-     * @param outputFrameSize the number of samples per channel <tt>output</tt>
-     *                        beginning at <tt>outputOffset</tt> of the maximum
-     *                        space available for output of the decoded signal
-     * @param decodeFEC       0 to decode the packet normally, 1 to decode the FEC
-     *                        data in the packet
-     * @return the number of decoded samples written into <tt>output</tt> (beginning
-     *         at <tt>outputOffset</tt>)
-     */
     public static native int decode(long decoder, byte[] input, int inputOffset, int inputLength, byte[] output,
             int outputOffset, int outputFrameSize, int decodeFEC);
 
