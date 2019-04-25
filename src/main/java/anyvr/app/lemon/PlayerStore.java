@@ -12,8 +12,6 @@ import lombok.Data;
 @Data
 public class PlayerStore {
     private final List<Player> players;
-    private long conversationStarted;
-    private boolean isConversation;
 
     public PlayerStore() {
         this.players = Collections.synchronizedList(new ArrayList<>());
