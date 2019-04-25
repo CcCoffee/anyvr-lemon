@@ -15,4 +15,5 @@ public class Player {
     private final long audioDecoder;
     private final OutputStream audioFile;
     private final Object lock = new Object();
+    private long lastTimestamp;
 }

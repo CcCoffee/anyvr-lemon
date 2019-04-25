@@ -98,18 +98,41 @@ public class VoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerVoice> 
                     currentPlayer.getChannel().writeAndFlush(playerVoice);
                 });
 
+        writeFile(player, playerVoice);
+    }
+
+    private void writeFile(Player player, Spec.PlayerVoice playerVoice) throws IOException {
+
         synchronized (player.getLock()) {
             byte[] output = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
 
             int currentFrameSize = Opus
-                    .decode(player.getAudioDecoder(), playerVoice.getVoice().toByteArray(), 0, playerVoice.getVoice().toByteArray().length, output, 0, MAX_FRAME_SIZE, 0);
+                    .decode(player.getAudioDecoder(), playerVoice.getVoice().toByteArray(), 0, playerVoice.getVoice().toByteArray().length, output, 0,
+                            MAX_FRAME_SIZE, 0);
 
-            logger.info("Write");
-            byte[] audioStream = new byte[currentFrameSize * CHANNELS * 2];
-            for(int i  = 0; i < currentFrameSize * CHANNELS * 2;i++) {
-                audioStream[i] = output[i];
+            if (player.getLastTimestamp() == 0) {
+                byte[] audioStream = new byte[currentFrameSize * CHANNELS * 2];
+                for (int i = 0; i < currentFrameSize * CHANNELS * 2; i++) {
+                    audioStream[i] = output[i];
+                }
+                player.getAudioFile().write(audioStream);
+            } else {
+                if (player.getLastTimestamp() + 20 == playerVoice.getTimestamp()) {
+                    byte[] audioStream = new byte[currentFrameSize * CHANNELS * 2];
+                    for (int i = 0; i < currentFrameSize * CHANNELS * 2; i++) {
+                        audioStream[i] = output[i];
+                    }
+                    player.getAudioFile().write(audioStream);
+                } else {
+                    int fillGapCounter = (int) ((playerVoice.getTimestamp() - player.getLastTimestamp()) / 20);
+
+                    for (int i = 0; i < fillGapCounter; i++) {
+                        byte[] audioStream = new byte[currentFrameSize * CHANNELS * 2];
+                        player.getAudioFile().write(audioStream);
+                    }
+                }
             }
-            player.getAudioFile().write(audioStream);
+            player.setLastTimestamp(playerVoice.getTimestamp());
         }
     }
 

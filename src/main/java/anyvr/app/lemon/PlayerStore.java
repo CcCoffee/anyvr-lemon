@@ -12,6 +12,8 @@ import lombok.Data;
 @Data
 public class PlayerStore {
     private final List<Player> players;
+    private long conversationStarted;
+    private boolean isConversation;
 
     public PlayerStore() {
         this.players = Collections.synchronizedList(new ArrayList<>());
@@ -22,15 +24,6 @@ public class PlayerStore {
     }
 
     public void remove(Channel channel) {
-        //check if players find only one uuid
-        //            final Optional<Player> player = players.stream().filter((Player currentPlayer) -> {
-        //                if (currentPlayer.uuid.equals(uuid)) {
-        //                    return true;
-        //                } else {
-        //                    return false;
-        //                }
-        //            }).findFirst();
-        //
         players.removeIf((Player player) -> player.getChannel().equals(channel));
     }
 
