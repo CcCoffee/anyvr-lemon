@@ -55,6 +55,7 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
 
             if (decoder == 0) {
                 logger.error("Creating Decoder Error");
+                return;
             }
 
             player = new Player(ctx.channel(), playerUuid, decoder, audioFile);
