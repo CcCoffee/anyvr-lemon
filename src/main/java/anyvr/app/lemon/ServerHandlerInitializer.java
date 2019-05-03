@@ -15,6 +15,9 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 
 public class ServerHandlerInitializer extends ChannelInitializer<Channel> {
 
+    // Todo
+    private final String path = "/app/logs/";
+
     public ServerHandlerInitializer() {
     }
 
@@ -25,7 +28,7 @@ public class ServerHandlerInitializer extends ChannelInitializer<Channel> {
         p.addLast(new ReadTimeoutHandler(10));
         p.addLast(new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, 10000, 0, 4, 0, 4, true));
         p.addLast(new ProtobufDecoder(Spec.PlayerVoice.getDefaultInstance()));
-        p.addLast(new PlayerVoiceHandler());
+        p.addLast(new PlayerVoiceHandler(path, new PlayerStore()));
 
         p.addLast(new ProtobufIntLengthPrepender());
         p.addLast(new ProtobufEncoder());

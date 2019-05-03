@@ -13,7 +13,8 @@ public class Player {
     private final Channel channel;
     private final UUID uuid;
     private final long audioDecoder;
-    private final OutputStream audioFile;
+    private final OutputStream voiceFile;
     private final Object lock = new Object();
+    private int lastDatagramId;
     private long lastTimestamp;
 }

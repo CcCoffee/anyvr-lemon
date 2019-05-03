@@ -7,9 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import io.netty.channel.Channel;
-import lombok.Data;
 
-@Data
 public class PlayerStore {
     private final List<Player> players;
 
@@ -47,5 +45,9 @@ public class PlayerStore {
                 .stream()
                 .filter((Player player) -> player.getUuid().equals(uuid))
                 .findFirst();
+    }
+
+    public int size() {
+        return players.size();
     }
 }

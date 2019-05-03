@@ -170,7 +170,7 @@ JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encode(JNIEnv *env, jclass 
 JNIEXPORT jlong JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1create(JNIEnv *env, jclass clazz, jint Fs, jint channels)
 {
 	int error;
-	OpusEncoder *encoder = opus_encoder_create(Fs, channels, OPUS_APPLICATION_AUDIO, &error);
+	OpusEncoder *encoder = opus_encoder_create(Fs, channels, OPUS_APPLICATION_VOIP, &error);
 
 	if (OPUS_OK != error)
 		encoder = 0;
