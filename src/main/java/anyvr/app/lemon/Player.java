@@ -14,7 +14,7 @@ public class Player {
     private final UUID uuid;
     private final long audioDecoder;
     private final OutputStream voiceFile;
-    private final Object lock = new Object();
+    private final String voiceFileName;
     private int lastDatagramId;
     private long lastTimestamp;
 }

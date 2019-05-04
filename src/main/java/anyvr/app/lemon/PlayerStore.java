@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import anyvr.app.lemon.jni.Opus;
 import io.netty.channel.Channel;
 
 public class PlayerStore {
@@ -20,7 +21,14 @@ public class PlayerStore {
     }
 
     public void remove(Channel channel) {
-        players.removeIf((Player player) -> player.getChannel().equals(channel));
+        players.removeIf((Player player) -> {
+            if(player.getChannel().equals(channel)) {
+                Opus.decoder_destroy(player.getAudioDecoder());
+                return true;
+            } else {
+                return false;
+            }
+        });
     }
 
     public boolean isPlayerAlreadyExist(UUID uuid) {

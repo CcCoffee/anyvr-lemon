@@ -1,6 +1,7 @@
 package anyvr.app.lemon.handler;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,12 +15,14 @@ import org.apache.logging.log4j.Logger;
 import anyvr.Spec;
 import anyvr.app.lemon.Player;
 import anyvr.app.lemon.PlayerStore;
-import anyvr.app.lemon.WritingVoiceFile;
+import anyvr.app.lemon.ServerHandlerInitializer;
+import anyvr.app.lemon.VoiceFileNameUtils;
+import anyvr.app.lemon.VoiceFileWriter;
 import anyvr.app.lemon.jni.Opus;
+import com.google.common.primitives.Shorts;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerVoice> {
 
@@ -30,6 +33,7 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
     private String voiceFilePath;
     private final PlayerStore playerStore;
     private final Object lockDatagramId = new Object();
+    private final VoiceFileWriter voiceFileWriter = new VoiceFileWriter(); //ToDo
 
     public PlayerVoiceHandler(String voiceFilePath, PlayerStore playerStore) {
         this.voiceFilePath = voiceFilePath;
@@ -38,7 +42,11 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
 
     @Override
     public void channelInactive(final ChannelHandlerContext ctx) throws Exception {
+        //if(playerStore.size() == 2) {
+        //mixing
+
         playerStore.remove(ctx.channel());
+        // }
     }
 
     @Override
@@ -49,28 +57,7 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
 
         UUID playerUuid = UUID.fromString(playerVoice.getUuid());
 
-        Player player;
-        if (!playerStore.isPlayerAlreadyExist(playerUuid)) {
-            final long decoder = Opus.decoder_create(SAMPLE_RATE, CHANNELS);
-
-            String audioFileName = voiceFilePath + playerUuid.toString() + ".raw";
-            //WritingVoiceFile audioFile = new WritingVoiceFile(audioFileName);
-
-            Path fileOutput = Paths.get(audioFileName);
-            OutputStream outputStream = Files.newOutputStream(fileOutput);
-
-            if (decoder == 0) {
-                logger.error("Creating Decoder Error");
-                return;
-            }
-
-            player = new Player(ctx.channel(), playerUuid, decoder, outputStream);
-            playerStore.add(player);
-            logger.info("Create new Player");
-        } else {
-            player = playerStore.getPlayer(playerUuid).get();
-            logger.info("Update Player");
-        }
+        Player player = getPlayer(playerUuid, ctx.channel());
 
         if (!isUdpInSequence(playerVoice.getDatagramOrderId(), player)) {
             return;
@@ -81,7 +68,31 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
                     currentPlayer.getChannel().writeAndFlush(playerVoice);
                 });
 
-        checkIfHaveToFillTheGap(player, playerVoice);
+        voiceFileWriter.checkIfHaveToFillTheGap(player, playerVoice);
+        voiceFileWriter.writePlayerAudioFile(player, playerVoice);
+    }
+
+    private Player getPlayer(UUID playerUuid, Channel channel) throws IOException {
+        if (!playerStore.isPlayerAlreadyExist(playerUuid)) {
+            final long decoder = Opus.decoder_create(SAMPLE_RATE, CHANNELS);
+            final String voiceFileName = VoiceFileNameUtils.voiceFileName(voiceFilePath, playerUuid);
+            Path fileOutput = Paths.get(voiceFileName);
+            OutputStream outputStream = Files.newOutputStream(fileOutput);
+
+            if (decoder == 0) {
+                //Todo Exception Handling
+                logger.error("Creating Decoder Error");
+            }
+
+            Player player = new Player(channel, playerUuid, decoder, outputStream, voiceFileName);
+            playerStore.add(player);
+            logger.info("Create new Player");
+            return player;
+        } else {
+            Player player = playerStore.getPlayer(playerUuid).get();
+            logger.info("Update Player");
+            return player;
+        }
     }
 
     private boolean isUdpInSequence(int currentDatagrammId, Player player) {
@@ -95,83 +106,52 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
     }
 
     //    private void checkIfHaveToFillTheGap(Player player, Spec.PlayerVoice playerVoice) throws IOException {
+    //            int gapCounter = (int) ((playerVoice.getTimestamp() - player.getLastTimestamp()) / 20);
     //
-    //        synchronized (player.getLock()) {
-    //            byte[] output = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
-    //
-    //            if ((player.getLastTimestamp() == 0) || (player.getLastTimestamp() + 20) == playerVoice.getTimestamp()) {
-    //                int currentFrameSize = Opus
-    //                        .decode(player.getAudioDecoder(), playerVoice.getVoice().toByteArray(), 0, playerVoice.getVoice().toByteArray().length, output, 0, MAX_FRAME_SIZE, 0);
-    //
-    //                writePlayerAudioFile(currentFrameSize, output, player);
+    //            if ((gapCounter == 1) || (player.getLastTimestamp() == 0)) {
+    //                writePlayerAudioFile(player, playerVoice);
+    //            } else if (gapCounter > 1) {
+    //                fillTheGap(player, gapCounter - 1);
+    //                writePlayerAudioFile(player, playerVoice);
     //            } else {
-    //                int fillGapCounter = (int) ((playerVoice.getTimestamp() - player.getLastTimestamp()) / 20) - 1;
-    //                System.out.println("Fill Gap Counter: " + fillGapCounter);
-    //                for (int i = 0; i < fillGapCounter; i++) {
-    //
-    //                    Opus.decode(player.getAudioDecoder(), null, 0, 0, output, 0,
-    //                                    MAX_FRAME_SIZE, 0);
-    //
-    //
-    //                    byte[] audioStream = new byte[480];
-    //                    player.getVoiceFile().write(audioStream);
-    //                }
+    //                //throw Exception
     //            }
     //            player.setLastTimestamp(playerVoice.getTimestamp());
+    //    }
+    //
+    //    private void fillTheGap(final Player player, final int fillGapCounter) {
+    //        byte[] output = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
+    //        for (int i = 0; i < fillGapCounter; i++) {
+    //            Opus.decode(player.getAudioDecoder(), null, 0, 0, output, 0,
+    //                    MAX_FRAME_SIZE, 0);
+    //
+    //            byte[] audioStream = new byte[480];
+    //            try {
+    //                player.getVoiceFile().write(audioStream);
+    //            } catch (IOException e) {
+    //                logger.error(e.getMessage());
+    //            }
     //        }
     //    }
-
-    private void checkIfHaveToFillTheGap(Player player, Spec.PlayerVoice playerVoice) throws IOException {
-
-        synchronized (player.getLock()) {
-            int fillGapCounter = (int) ((playerVoice.getTimestamp() - player.getLastTimestamp()) / 20);
-
-            System.out.println(fillGapCounter);
-            if ((fillGapCounter == 1) || (player.getLastTimestamp() == 0)) {
-                writePlayerAudioFile(player, playerVoice);
-            } else if (fillGapCounter > 1) {
-                fillTheGap(player, fillGapCounter - 1);
-                writePlayerAudioFile(player, playerVoice);
-            } else {
-                //throw Exception
-            }
-            player.setLastTimestamp(playerVoice.getTimestamp());
-        }
-    }
-
-    private void fillTheGap(final Player player, final int fillGapCounter) {
-        byte[] output = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
-        for (int i = 0; i < fillGapCounter; i++) {
-            Opus.decode(player.getAudioDecoder(), null, 0, 0, output, 0,
-                    MAX_FRAME_SIZE, 0);
-
-            byte[] audioStream = new byte[480];
-            try {
-                player.getVoiceFile().write(audioStream);
-            } catch (IOException e) {
-                logger.error(e.getMessage());
-            }
-        }
-    }
-
-    private void writePlayerAudioFile(final Player player, final Spec.PlayerVoice playerVoice) {
-        byte[] output = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
-
-        int currentFrameSize = Opus
-                .decode(player.getAudioDecoder(), playerVoice.getVoice().toByteArray(), 0, playerVoice.getVoice().toByteArray().length, output, 0,
-                        MAX_FRAME_SIZE, 0);
-
-        byte[] audioStream = new byte[currentFrameSize];
-        for (int i = 0; i < currentFrameSize; i++) {
-            audioStream[i] = output[i];
-        }
-
-        try {
-            player.getVoiceFile().write(audioStream);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
+    //
+    //    private void writePlayerAudioFile(final Player player, final Spec.PlayerVoice playerVoice) {
+    //        byte[] output = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
+    //
+    //        int currentFrameSize = Opus
+    //                .decode(player.getAudioDecoder(), playerVoice.getVoice().toByteArray(), 0, playerVoice.getVoice().toByteArray().length, output, 0,
+    //                        MAX_FRAME_SIZE, 0);
+    //
+    //        byte[] audioStream = new byte[currentFrameSize];
+    //        for (int i = 0; i < currentFrameSize; i++) {
+    //            audioStream[i] = output[i];
+    //        }
+    //
+    //        try {
+    //            player.getVoiceFile().write(audioStream);
+    //        } catch (IOException e) {
+    //            logger.error(e.getMessage());
+    //        }
+    //    }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

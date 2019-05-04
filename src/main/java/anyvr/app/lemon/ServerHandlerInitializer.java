@@ -16,7 +16,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 public class ServerHandlerInitializer extends ChannelInitializer<Channel> {
 
     // Todo
-    private final String path = "/app/logs/";
+    public static final String path = "/app/logs/";
 
     public ServerHandlerInitializer() {
     }
