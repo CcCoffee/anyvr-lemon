@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import anyvr.Spec;
 import anyvr.app.lemon.Player;
 import anyvr.app.lemon.PlayerStore;
+import anyvr.app.lemon.PlayerStoreManager;
 import anyvr.app.lemon.ServerHandlerInitializer;
 import anyvr.app.lemon.VoiceFileNameUtils;
 import anyvr.app.lemon.VoiceFileWriter;
@@ -26,73 +27,41 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerVoice> {
 
-    private static final int MAX_FRAME_SIZE = 6 * 480;
-    private static final int CHANNELS = 1;
-    private static final int SAMPLE_RATE = 24000;
     private static Logger logger = LogManager.getLogger(PlayerVoiceHandler.class);
     private String voiceFilePath;
     private final PlayerStore playerStore;
     private final Object lockDatagramId = new Object();
     private final VoiceFileWriter voiceFileWriter = new VoiceFileWriter(); //ToDo
+    private final PlayerStoreManager playerStoreManager;
 
     public PlayerVoiceHandler(String voiceFilePath, PlayerStore playerStore) {
         this.voiceFilePath = voiceFilePath;
         this.playerStore = playerStore;
+        this.playerStoreManager = new PlayerStoreManager(playerStore, voiceFilePath);
     }
 
     @Override
     public void channelInactive(final ChannelHandlerContext ctx) throws Exception {
-        //if(playerStore.size() == 2) {
-        //mixing
-
         playerStore.remove(ctx.channel());
-        // }
     }
 
     @Override
     public void channelRead0(final ChannelHandlerContext ctx, final Spec.PlayerVoice playerVoice) throws Exception {
-
         logger.info("UUID: " + playerVoice.getUuid());
         logger.info("Audio: " + Arrays.toString(playerVoice.getVoice().toByteArray()));
 
         UUID playerUuid = UUID.fromString(playerVoice.getUuid());
 
-        Player player = getPlayer(playerUuid, ctx.channel());
+        Player player = playerStoreManager.getPlayer(playerUuid, ctx.channel());
 
         if (!isUdpInSequence(playerVoice.getDatagramOrderId(), player)) {
             return;
         }
 
-        playerStore.findAnotherPlayer(playerUuid)
-                .ifPresent((Player currentPlayer) -> {
-                    currentPlayer.getChannel().writeAndFlush(playerVoice);
-                });
-
         voiceFileWriter.checkIfHaveToFillTheGap(player, playerVoice);
         voiceFileWriter.writePlayerAudioFile(player, playerVoice);
-    }
 
-    private Player getPlayer(UUID playerUuid, Channel channel) throws IOException {
-        if (!playerStore.isPlayerAlreadyExist(playerUuid)) {
-            final long decoder = Opus.decoder_create(SAMPLE_RATE, CHANNELS);
-            final String voiceFileName = VoiceFileNameUtils.voiceFileName(voiceFilePath, playerUuid);
-            Path fileOutput = Paths.get(voiceFileName);
-            OutputStream outputStream = Files.newOutputStream(fileOutput);
-
-            if (decoder == 0) {
-                //Todo Exception Handling
-                logger.error("Creating Decoder Error");
-            }
-
-            Player player = new Player(channel, playerUuid, decoder, outputStream, voiceFileName);
-            playerStore.add(player);
-            logger.info("Create new Player");
-            return player;
-        } else {
-            Player player = playerStore.getPlayer(playerUuid).get();
-            logger.info("Update Player");
-            return player;
-        }
+        playerStoreManager.sendMessageToOtherPlayer(playerUuid, playerVoice); //ToDo Test
     }
 
     private boolean isUdpInSequence(int currentDatagrammId, Player player) {
