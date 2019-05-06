@@ -52,8 +52,8 @@ public class MixingVoiceFilesTest {
         playerOneOutput.write(playerOneBytes);
         playerTwoOutput.write(playerTwoBytes);
 
-        final Player playerOne = new Player(null, playerOneUuid, 0, playerOneOutput, playerOneFileName);
-        final Player playerTwo = new Player(null, playerTwoUuid, 0, playerTwoOutput, playerTwoFileName);
+        final Player playerOne = new Player(null, playerOneUuid, null, playerOneOutput, playerOneFileName);
+        final Player playerTwo = new Player(null, playerTwoUuid, null, playerTwoOutput, playerTwoFileName);
 
         mixingVoiceFiles.mixVoice(playerOne, playerTwo);
 

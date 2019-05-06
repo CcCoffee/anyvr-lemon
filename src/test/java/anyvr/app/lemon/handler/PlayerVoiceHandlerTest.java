@@ -27,6 +27,7 @@ import anyvr.Spec;
 import anyvr.app.lemon.AudioSamplesHelper;
 import anyvr.app.lemon.Player;
 import anyvr.app.lemon.PlayerStore;
+import anyvr.app.lemon.VoiceFileWriter;
 import anyvr.app.lemon.jni.Opus;
 import com.google.protobuf.ByteString;
 import io.netty.channel.Channel;
@@ -62,13 +63,12 @@ public class PlayerVoiceHandlerTest {
         when(channelContext.channel()).thenReturn(channel);
 
         playerStore = Mockito.spy(PlayerStore.class);
-        playerVoiceHandler = new PlayerVoiceHandler(voiceFilePath, playerStore);
+        playerVoiceHandler = new PlayerVoiceHandler(voiceFilePath, playerStore, new VoiceFileWriter());
 
         long encoder = Opus.encoder_create(24000, 1);
         byte[] outputEncode = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
 
         final int packageLength = Opus.encode(encoder, AudioSamplesHelper.audioSampleOne, 0, 480, outputEncode, 0, outputEncode.length);
-
         final byte[] encodedVoice = Arrays.copyOfRange(outputEncode, 0, packageLength);
 
         int datagramId = 1;

@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import anyvr.Spec;
-import anyvr.app.lemon.jni.OpusWrapper;
+
 
 public class VoiceFileWriter {
 
@@ -22,9 +22,8 @@ public class VoiceFileWriter {
     }
 
     private void fillTheGapWithZeros(final Player player, final int fillGapCounter) {
-        byte[] output = new byte[MAX_FRAME_SIZE * 2];
         for (int i = 0; i < fillGapCounter; i++) {
-            OpusWrapper.fillTheGap(player.getAudioDecoder(), output);
+            player.getOpusDecoder().decodeLostPacket();
 
             byte[] audioStream = new byte[480];
             try {
@@ -37,12 +36,10 @@ public class VoiceFileWriter {
 
     public void writePlayerAudioFile(final Player player, final Spec.PlayerVoice playerVoice) {
         byte[] output = new byte[MAX_FRAME_SIZE * 2];
-        //
-        //        int currentFrameSize = Opus
-        //                .decode(player.getAudioDecoder(), playerVoice.getVoice().toByteArray(), 0, playerVoice.getVoice().toByteArray().length, output, 0,
-        //                        MAX_FRAME_SIZE, 0);
 
-        int currentFrameSize = OpusWrapper.decode(player.getAudioDecoder(), playerVoice.getVoice().toByteArray(), output);
+        int currentFrameSize = player.getOpusDecoder()
+                .decode(playerVoice.getVoice().toByteArray(), output);
+
         byte[] audioStream = new byte[currentFrameSize];
         for (int i = 0; i < currentFrameSize; i++) {
             audioStream[i] = output[i];

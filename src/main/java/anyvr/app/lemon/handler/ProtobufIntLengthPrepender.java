@@ -17,11 +17,11 @@ public class ProtobufIntLengthPrepender extends MessageToByteEncoder<ByteBuf> {
     protected  void encode(final ChannelHandlerContext ctx, final ByteBuf msg, final ByteBuf out) throws Exception {
 
         int length = msg.readableBytes();
-        byte[] lengthInByte = toByteArray(length);
+        byte[] lengthInBytes = toByteArray(length);
 
-        Collections.reverse(Bytes.asList(lengthInByte));
+        Collections.reverse(Bytes.asList(lengthInBytes));
 
-        out.writeBytes(lengthInByte);
+        out.writeBytes(lengthInBytes);
         out.writeBytes(msg, msg.readerIndex(), length);
     }
 

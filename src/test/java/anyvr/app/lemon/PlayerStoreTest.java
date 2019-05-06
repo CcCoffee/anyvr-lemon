@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import anyvr.app.lemon.jni.OpusDecoder;
 import io.netty.channel.Channel;
 
 public class PlayerStoreTest {
@@ -43,7 +44,7 @@ public class PlayerStoreTest {
         final UUID playerTwoId = UUID.randomUUID();
         Channel playerChannelOne = new ChannelTest();
 
-        Player playerOne = new Player(playerChannelOne, playerOneId, 123L, null, null);
+        Player playerOne = new Player(playerChannelOne, playerOneId, null, null, null);
         playerStore.add(playerOne);
 
         assertThat(playerStore.isPlayerAlreadyExist(playerOneId), is(equalTo(true)));
@@ -57,8 +58,8 @@ public class PlayerStoreTest {
         Channel playerChannelOne = new ChannelTest();
         Channel playerChannelTwo = new ChannelTest();
 
-        Player playerOne = new Player(playerChannelOne, playerOneId, 123L, null, null);
-        Player playerTwo = new Player(playerChannelTwo, playerTwoId, 123L, null, null);
+        Player playerOne = new Player(playerChannelOne, playerOneId, null, null, null);
+        Player playerTwo = new Player(playerChannelTwo, playerTwoId, null, null, null);
         playerStore.add(playerOne);
         playerStore.add(playerTwo);
 
@@ -71,7 +72,7 @@ public class PlayerStoreTest {
         final UUID playerOneId = UUID.randomUUID();
         Channel playerChannelOne = new ChannelTest();
 
-        Player playerOne = new Player(playerChannelOne, playerOneId, 123L, null, null);
+        Player playerOne = new Player(playerChannelOne, playerOneId, null, null, null);
         playerStore.add(playerOne);
 
         assertThat(playerStore.findAnotherPlayer(playerOneId).isPresent(), is(equalTo(false)));

@@ -23,7 +23,7 @@ public class PlayerStore {
     public void remove(Channel channel) {
         players.removeIf((Player player) -> {
             if(player.getChannel().equals(channel)) {
-                Opus.decoder_destroy(player.getAudioDecoder());
+                player.getOpusDecoder().destroyOpusDecoder();
                 return true;
             } else {
                 return false;
@@ -32,8 +32,8 @@ public class PlayerStore {
     }
 
     public boolean isPlayerAlreadyExist(UUID uuid) {
-
-        return players.stream().anyMatch((Player player) -> player.getUuid().equals(uuid));
+        return players.stream()
+                .anyMatch((Player player) -> player.getUuid().equals(uuid));
     }
 
     public Optional<Player> findAnotherPlayer(UUID uuid) {

@@ -11,15 +11,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import anyvr.Spec;
-import anyvr.app.lemon.jni.Opus;
-import anyvr.app.lemon.jni.OpusWrapper;
+import anyvr.app.lemon.jni.OpusDecoder;
 import io.netty.channel.Channel;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class PlayerStoreManager {
+public class PlayerVoiceService {
 
-    private static Logger logger = LogManager.getLogger(PlayerStoreManager.class);
+    private static Logger logger = LogManager.getLogger(PlayerVoiceService.class);
     private final PlayerStore playerStore;
     private final String voiceFilePath;
 
@@ -38,12 +37,12 @@ public class PlayerStoreManager {
     }
 
     private Player createNewPlayer(final UUID playerUuid, final Channel channel) throws IOException {
-        final long decoder = OpusWrapper.createOpusDecoder();
+        final OpusDecoder opusDecoder = new OpusDecoder();
         final String voiceFileName = VoiceFileNameUtils.voiceFileName(voiceFilePath, playerUuid);
         final Path fileOutput = Paths.get(voiceFileName);
         final OutputStream outputStream = Files.newOutputStream(fileOutput);
 
-        return new Player(channel, playerUuid, decoder, outputStream, voiceFileName);
+        return new Player(channel, playerUuid, opusDecoder, outputStream, voiceFileName);
     }
 
     public void sendMessageToOtherPlayer(final UUID playerUuid, final Spec.PlayerVoice playerVoice) {
