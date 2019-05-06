@@ -29,7 +29,7 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
     }
 
     @Override
-    public void channelInactive(final ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(final ChannelHandlerContext ctx) {
         playerStore.remove(ctx.channel());
     }
 
@@ -38,9 +38,9 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
         logger.info("UUID: " + playerVoice.getUuid());
         logger.info("Audio: " + Arrays.toString(playerVoice.getVoice().toByteArray()));
 
-        UUID playerUuid = UUID.fromString(playerVoice.getUuid());
+        UUID playerId = UUID.fromString(playerVoice.getUuid());
 
-        Player player = playerVoiceService.getPlayer(playerUuid, ctx.channel());
+        Player player = playerVoiceService.getPlayer(playerId, ctx.channel());
 
         if (!isUdpInSequence(playerVoice.getDatagramOrderId(), player)) {
             return;
@@ -49,7 +49,7 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
         voiceFileWriter.checkIfHaveToFillTheGap(player, playerVoice);
         voiceFileWriter.writePlayerAudioFile(player, playerVoice);
 
-        playerVoiceService.sendMessageToOtherPlayer(playerUuid, playerVoice); //ToDo Test
+        playerVoiceService.sendMessageToOtherPlayer(playerId, playerVoice); //ToDo Test
     }
 
     private boolean isUdpInSequence(int currentDatagrammId, Player player) {

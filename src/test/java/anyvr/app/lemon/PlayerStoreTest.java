@@ -21,22 +21,22 @@ public class PlayerStoreTest {
         playerStore = new PlayerStore();
     }
 
-//    @Test
-//    public void removePlayer() {
-//        final UUID playerOneId = UUID.randomUUID();
-//        final UUID playerTwoId = UUID.randomUUID();
-//        Channel playerChannelOne = new ChannelTest();
-//        Channel playerChannelTwo = new ChannelTest();
-//
-//        Player playerOne = new Player(playerChannelOne, playerOneId, 123L, null);
-//        Player playerTwo = new Player(playerChannelTwo, playerTwoId, 123L, null);
-//        playerStore.add(playerOne);
-//        playerStore.add(playerTwo);
-//
-//        playerStore.remove(playerChannelOne);
-//        assertThat(playerStore.size(), equalTo(1));
-//        playerStore.getPlayer(playerTwoId).ifPresent(player -> assertThat(player.getUuid(), is(equalTo(playerTwoId))));
-//    }
+    @Test
+    public void removePlayer() {
+        final UUID playerOneId = UUID.randomUUID();
+        final UUID playerTwoId = UUID.randomUUID();
+        Channel playerChannelOne = new ChannelTest();
+        Channel playerChannelTwo = new ChannelTest();
+
+        Player playerOne = new Player(playerChannelOne, playerOneId, new OpusDecoder(), null, null);
+        Player playerTwo = new Player(playerChannelTwo, playerTwoId, new OpusDecoder(), null, null);
+        playerStore.add(playerOne);
+        playerStore.add(playerTwo);
+
+        playerStore.remove(playerChannelOne);
+        assertThat(playerStore.size(), equalTo(1));
+        playerStore.getPlayer(playerTwoId).ifPresent(player -> assertThat(player.getUuid(), is(equalTo(playerTwoId))));
+    }
 
     @Test
     public void isPlayerAlreadyExist() {

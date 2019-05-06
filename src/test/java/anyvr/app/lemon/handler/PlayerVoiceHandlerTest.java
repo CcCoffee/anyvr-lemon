@@ -1,9 +1,11 @@
 package anyvr.app.lemon.handler;
 
+import static anyvr.app.lemon.jni.OpusConf.FRAME_SIZE;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,7 +16,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +29,7 @@ import anyvr.app.lemon.AudioSamplesHelper;
 import anyvr.app.lemon.Player;
 import anyvr.app.lemon.PlayerStore;
 import anyvr.app.lemon.VoiceFileWriter;
-import anyvr.app.lemon.jni.Opus;
+import anyvr.app.lemon.jni.OpusEncoder;
 import com.google.protobuf.ByteString;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,16 +37,13 @@ import io.netty.channel.ChannelHandlerContext;
 @ExtendWith(MockitoExtension.class)
 public class PlayerVoiceHandlerTest {
 
-    private static final int CHANNELS = 1;
-    private static final int MAX_FRAME_SIZE = 6 * 480;
-
     private PlayerVoiceHandler playerVoiceHandler;
 
     private String voiceFilePath = "tests/";
 
     private PlayerStore playerStore;
 
-    private float numberZerosPercentage = 0.07f;
+    private static final float NUMBER_ZEROS_PERCENTAGE_WITHOUT_GAP = 0.12f;
 
     private ChannelHandlerContext channelContext;
 
@@ -57,7 +55,7 @@ public class PlayerVoiceHandlerTest {
         purgeFiles(file);
     }
 
-    public long setup(final UUID playerUuid) throws Exception {
+    public OpusEncoder setup(final UUID playerUuid) throws Exception {
         channelContext = Mockito.mock(ChannelHandlerContext.class);
         final Channel channel = Mockito.mock(Channel.class);
         when(channelContext.channel()).thenReturn(channel);
@@ -65,11 +63,8 @@ public class PlayerVoiceHandlerTest {
         playerStore = Mockito.spy(PlayerStore.class);
         playerVoiceHandler = new PlayerVoiceHandler(voiceFilePath, playerStore, new VoiceFileWriter());
 
-        long encoder = Opus.encoder_create(24000, 1);
-        byte[] outputEncode = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
-
-        final int packageLength = Opus.encode(encoder, AudioSamplesHelper.audioSampleOne, 0, 480, outputEncode, 0, outputEncode.length);
-        final byte[] encodedVoice = Arrays.copyOfRange(outputEncode, 0, packageLength);
+        OpusEncoder opusEncoder = new OpusEncoder();
+        final byte[] encodedVoice = opusEncoder.encode(AudioSamplesHelper.audioSampleOne);
 
         int datagramId = 1;
         lastTimestemp = System.currentTimeMillis();
@@ -82,7 +77,7 @@ public class PlayerVoiceHandlerTest {
 
         playerVoiceHandler.channelRead0(channelContext, playerVoice);
 
-        return encoder;
+        return opusEncoder;
     }
 
     @Test
@@ -116,26 +111,21 @@ public class PlayerVoiceHandlerTest {
         player.getVoiceFile().close();
 
         String name = voiceFilePath + playerUuid.toString() + ".raw";
-        System.out.println(name);
         Path fileInput = Paths.get(name);
         final InputStream inputStream = Files.newInputStream(fileInput);
         byte[] actualVoice = inputStream.readAllBytes();
-        assertThat(actualVoice.length, is(equalTo(480)));
+        assertThat(actualVoice.length, is(equalTo(FRAME_SIZE)));
 
-        float percentageZeros = (float) countNumberZeros(actualVoice) / 480;
-        assertThat(percentageZeros, is(greaterThan(numberZerosPercentage)));
+        float percentageZeros = (float) countNumberZeros(actualVoice) / FRAME_SIZE;
+        assertThat(percentageZeros, is(lessThan(NUMBER_ZEROS_PERCENTAGE_WITHOUT_GAP)));
     }
 
     @Test
     public void writeVoiceFileWithGapTest() throws Exception {
         final UUID playerOneUuid = UUID.fromString("7b694294-d74c-413f-bf32-0c855f6c181e");
-        final long encoder = setup(playerOneUuid);
+        OpusEncoder opusEncoder = setup(playerOneUuid);
 
-        byte[] outputEncode = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
-
-        final int packageLength = Opus.encode(encoder, AudioSamplesHelper.audioSampleTwo, 0, 480, outputEncode, 0, outputEncode.length);
-
-        final byte[] encodedVoice = Arrays.copyOfRange(outputEncode, 0, packageLength);
+        final byte[] encodedVoice = opusEncoder.encode(AudioSamplesHelper.audioSampleOne);
 
         int datagramId = 2;
         long currentTimestemp = lastTimestemp + 40;
@@ -152,20 +142,17 @@ public class PlayerVoiceHandlerTest {
         Path fileInput = Paths.get(name);
         final InputStream inputStream = Files.newInputStream(fileInput);
         byte[] actualVoice = inputStream.readAllBytes();
-        assertThat(actualVoice.length, is(equalTo(1440)));
+        assertThat(actualVoice.length, is(equalTo(FRAME_SIZE * 3)));
         int countNumberZeros = countNumberZeros(actualVoice);
-        assertThat(countNumberZeros, is(greaterThan(480)));
+        assertThat(countNumberZeros, is(greaterThan(FRAME_SIZE)));
     }
 
     @Test
     public void udpSequenceTest() throws Exception {
         final UUID playerUuid = UUID.fromString("7b694294-d74c-413f-bf32-0c855f6c181e");
-        final long encoder = setup(playerUuid);
+        OpusEncoder opusEncoder = setup(playerUuid);
 
-        byte[] outputEncode = new byte[MAX_FRAME_SIZE * CHANNELS * 2];
-        final int packageLength = Opus.encode(encoder, AudioSamplesHelper.audioSampleTwo, 0, 480, outputEncode, 0, outputEncode.length);
-
-        final byte[] encodedVoice = Arrays.copyOfRange(outputEncode, 0, packageLength);
+        final byte[] encodedVoice = opusEncoder.encode(AudioSamplesHelper.audioSampleTwo);
 
         int datagramId = 0;
         long currentTimestemp = lastTimestemp + 40;
@@ -182,7 +169,7 @@ public class PlayerVoiceHandlerTest {
         Path fileInput = Paths.get(name);
         final InputStream inputStream = Files.newInputStream(fileInput);
         byte[] actualVoice = inputStream.readAllBytes();
-        assertThat(actualVoice.length, is(equalTo(480)));
+        assertThat(actualVoice.length, is(equalTo(FRAME_SIZE)));
     }
 
     private int countNumberZeros(byte[] actualVoice) {

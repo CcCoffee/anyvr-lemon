@@ -1,11 +1,13 @@
 package anyvr.app.lemon.jni;
 
+import static anyvr.app.lemon.jni.OpusConf.*;
+
+import java.util.Arrays;
+
 import anyvr.app.lemon.OpusException;
 
 public class OpusDecoder {
-    private static final int CHANNELS = 1;
-    private static final int SAMPLE_RATE = 24000;
-    private static final int MAX_FRAME_SIZE = 6 * 480;
+    private static final int MAX_FRAME_SIZE = 2 * FRAME_SIZE;
 
     private final long decoder;
 
@@ -13,7 +15,7 @@ public class OpusDecoder {
         this.decoder = createOpusDecoder();
     }
 
-    public long createOpusDecoder() {
+    private long createOpusDecoder() {
         final long decoder = Opus.decoder_create(SAMPLE_RATE, CHANNELS);
 
         if (decoder == 0) {
@@ -22,9 +24,11 @@ public class OpusDecoder {
         return decoder;
     }
 
-    public int decode(byte[] input, byte[] output) {
-        return Opus.decode(decoder, input, 0, input.length, output, 0,
+    public byte[] decode(byte[] input) {
+        byte[] output = new byte[MAX_FRAME_SIZE * 2];
+        int frameSize = Opus.decode(decoder, input, 0, input.length, output, 0,
                 MAX_FRAME_SIZE, 0);
+        return Arrays.copyOfRange(output, 0, frameSize);
     }
 
     public void destroyOpusDecoder() {
@@ -32,8 +36,7 @@ public class OpusDecoder {
     }
 
     public int decodeLostPacket() {
-        byte[] output = new byte[100];
-        return Opus.decode(decoder, null, 0, 0, output, 0,
+        return Opus.decode(decoder, null, 0, 0, null, 0,
                 MAX_FRAME_SIZE, 0);
     }
 }

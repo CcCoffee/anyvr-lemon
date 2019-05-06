@@ -1,5 +1,9 @@
 package anyvr.app.lemon;
 
+import static anyvr.app.lemon.jni.OpusConf.CHANNELS;
+import static anyvr.app.lemon.jni.OpusConf.FRAME_SIZE;
+import static anyvr.app.lemon.jni.OpusConf.SAMPLE_RATE;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
@@ -11,10 +15,8 @@ import org.junit.jupiter.api.Test;
 import anyvr.app.lemon.jni.Opus;
 
 public class OpusTest {
-    private static final int CHANNELS = 1;
-    private static final int SAMPLE_RATE = 24000;
-    private static final int MAX_FRAME_SIZE = 6 * 480;
     private static final int OPUS_BAD_ARG = -1;
+    private static final int MAX_FRAME_SIZE = 2 * FRAME_SIZE;
 
     @Test
     public void encodeTest() {

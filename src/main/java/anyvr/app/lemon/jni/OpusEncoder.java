@@ -1,11 +1,15 @@
 package anyvr.app.lemon.jni;
 
+import static anyvr.app.lemon.jni.OpusConf.CHANNELS;
+import static anyvr.app.lemon.jni.OpusConf.FRAME_SIZE;
+import static anyvr.app.lemon.jni.OpusConf.SAMPLE_RATE;
+
+import java.util.Arrays;
+
 import anyvr.app.lemon.OpusException;
 
 public class OpusEncoder {
-    private static final int CHANNELS = 1;
-    private static final int SAMPLE_RATE = 24000;
-    private static final int FRAME_SIZE = 480;
+    private static final int MAX_PACKET_SIZE = FRAME_SIZE * 3;
     private final long encoder;
 
     public OpusEncoder() {
@@ -13,7 +17,7 @@ public class OpusEncoder {
     }
 
     private long createOpusEncoder() {
-        final long encoder = Opus.decoder_create(SAMPLE_RATE, CHANNELS);
+        final long encoder = Opus.encoder_create(SAMPLE_RATE, CHANNELS);
 
         if (encoder == 0) {
             throw new OpusException("Creating Opus Encoder Error");
@@ -21,8 +25,10 @@ public class OpusEncoder {
         return encoder;
     }
 
-    private int encode(byte[] input, byte[] output) {
-        return Opus.encode(encoder, input, 0, FRAME_SIZE, output, 0, output.length);
+    public byte[] encode(byte[] input) {
+        byte[] output = new byte[MAX_PACKET_SIZE];
+        final int packageLength = Opus.encode(encoder, input, 0, FRAME_SIZE, output, 0, output.length);
+        return Arrays.copyOfRange(output, 0, packageLength);
     }
 
     public int getBandWidth() {

@@ -22,33 +22,33 @@ public class PlayerVoiceService {
     private final PlayerStore playerStore;
     private final String voiceFilePath;
 
-    public Player getPlayer(final UUID playerUuid, final Channel channel) throws IOException {
-        if (!playerStore.isPlayerAlreadyExist(playerUuid)) {
+    public Player getPlayer(final UUID playerId, final Channel channel) throws IOException {
+        if (!playerStore.isPlayerAlreadyExist(playerId)) {
 
-            final Player player = createNewPlayer(playerUuid, channel);
+            final Player player = createNewPlayer(playerId, channel);
             playerStore.add(player);
             logger.info("Create new Player");
             return player;
         } else {
-            final Player player = playerStore.getPlayer(playerUuid).get();
+            final Player player = playerStore.getPlayer(playerId).get();
             logger.info("Update Player");
             return player;
         }
     }
 
-    private Player createNewPlayer(final UUID playerUuid, final Channel channel) throws IOException {
+    private Player createNewPlayer(final UUID playerId, final Channel channel) throws IOException {
         final OpusDecoder opusDecoder = new OpusDecoder();
-        final String voiceFileName = VoiceFileNameUtils.voiceFileName(voiceFilePath, playerUuid);
+        final String voiceFileName = VoiceFileNameUtils.voiceFileName(voiceFilePath, playerId);
         final Path fileOutput = Paths.get(voiceFileName);
         final OutputStream outputStream = Files.newOutputStream(fileOutput);
 
-        return new Player(channel, playerUuid, opusDecoder, outputStream, voiceFileName);
+        return new Player(channel, playerId, opusDecoder, outputStream, voiceFileName);
     }
 
-    public void sendMessageToOtherPlayer(final UUID playerUuid, final Spec.PlayerVoice playerVoice) {
-        playerStore.findAnotherPlayer(playerUuid)
-                .ifPresent((Player currentPlayer) -> {
-                    currentPlayer.getChannel().writeAndFlush(playerVoice);
-                });
+    public void sendMessageToOtherPlayer(final UUID playerId, final Spec.PlayerVoice playerVoice) {
+        playerStore.findAnotherPlayer(playerId)
+                .ifPresent((Player currentPlayer) ->
+                        currentPlayer.getChannel().writeAndFlush(playerVoice)
+                );
     }
 }

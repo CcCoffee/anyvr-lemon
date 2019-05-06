@@ -7,11 +7,9 @@ import org.apache.logging.log4j.Logger;
 
 import anyvr.Spec;
 
-
 public class VoiceFileWriter {
 
     private static Logger logger = LogManager.getLogger(VoiceFileWriter.class);
-    private static final int MAX_FRAME_SIZE = 6 * 480;
 
     public void checkIfHaveToFillTheGap(Player player, Spec.PlayerVoice playerVoice) {
         int gapCounter = (int) ((playerVoice.getTimestamp() - player.getLastTimestamp()) / 20);
@@ -35,18 +33,11 @@ public class VoiceFileWriter {
     }
 
     public void writePlayerAudioFile(final Player player, final Spec.PlayerVoice playerVoice) {
-        byte[] output = new byte[MAX_FRAME_SIZE * 2];
 
-        int currentFrameSize = player.getOpusDecoder()
-                .decode(playerVoice.getVoice().toByteArray(), output);
-
-        byte[] audioStream = new byte[currentFrameSize];
-        for (int i = 0; i < currentFrameSize; i++) {
-            audioStream[i] = output[i];
-        }
-
+        final byte[] decodedVoice = player.getOpusDecoder()
+                .decode(playerVoice.getVoice().toByteArray());
         try {
-            player.getVoiceFile().write(audioStream);
+            player.getVoiceFile().write(decodedVoice);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
