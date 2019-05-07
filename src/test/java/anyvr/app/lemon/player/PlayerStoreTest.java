@@ -64,8 +64,8 @@ public class PlayerStoreTest {
         playerStore.add(playerOne);
         playerStore.add(playerTwo);
 
-        assertThat(playerStore.findAnotherPlayer(playerOneId).get().getPlayerId(), is(equalTo(playerTwoId)));
-        assertThat(playerStore.findAnotherPlayer(playerTwoId).get().getPlayerId(), is(equalTo(playerOneId)));
+        assertThat(playerStore.findOtherPlayer(playerOneId).get().getPlayerId(), is(equalTo(playerTwoId)));
+        assertThat(playerStore.findOtherPlayer(playerTwoId).get().getPlayerId(), is(equalTo(playerOneId)));
     }
 
     @Test
@@ -76,13 +76,13 @@ public class PlayerStoreTest {
         Player playerOne = new Player(playerChannelOne, playerOneId, null, null, null);
         playerStore.add(playerOne);
 
-        assertThat(playerStore.findAnotherPlayer(playerOneId).isPresent(), is(equalTo(false)));
+        assertThat(playerStore.findOtherPlayer(playerOneId).isPresent(), is(equalTo(false)));
     }
 
     @Test
     public void findAnotherPlayerUuidIsNullTest() {
 
-        assertThat(playerStore.findAnotherPlayer(null).isPresent(), is(equalTo(false)));
+        assertThat(playerStore.findOtherPlayer(null).isPresent(), is(equalTo(false)));
     }
 
 }

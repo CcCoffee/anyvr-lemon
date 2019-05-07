@@ -10,11 +10,7 @@ import anyvr.app.lemon.player.Player;
 import io.netty.channel.Channel;
 
 public class PlayerStore {
-    private final List<Player> players;
-
-    public PlayerStore() {
-        this.players = Collections.synchronizedList(new ArrayList<>());
-    }
+    private final List<Player> players = new ArrayList<>();
 
     public void add(Player player) {
         players.add(player);
@@ -36,14 +32,14 @@ public class PlayerStore {
                 .anyMatch((Player player) -> player.getPlayerId().equals(playerId));
     }
 
-    public Optional<Player> findAnotherPlayer(UUID playedrId) {
+    public Optional<Player> findOtherPlayer(UUID playerId) {
 
-        if (playedrId == null) {
+        if (playerId == null) {
             return Optional.empty();
         }
 
         return players.stream()
-                .filter((Player currentPlayer) -> !currentPlayer.getPlayerId().equals(playedrId))
+                .filter((Player currentPlayer) -> !currentPlayer.getPlayerId().equals(playerId))
                 .findFirst();
     }
 

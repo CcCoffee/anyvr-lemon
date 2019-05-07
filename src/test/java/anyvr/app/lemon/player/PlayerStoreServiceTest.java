@@ -12,9 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import anyvr.Spec;
-import anyvr.app.lemon.player.Player;
-import anyvr.app.lemon.player.PlayerStore;
-import anyvr.app.lemon.player.PlayerStoreService;
 import com.google.protobuf.ByteString;
 import io.netty.channel.Channel;
 
@@ -46,7 +43,7 @@ public class PlayerStoreServiceTest {
 
         playerStoreService.sendMessageToOtherPlayer(playerOneId, playerVoice);
 
-        verify(playerStore, times(1)).findAnotherPlayer(playerOneId);
+        verify(playerStore, times(1)).findOtherPlayer(playerOneId);
         verify(channel, times(1)).writeAndFlush(playerVoice);
         verify(channel, times(1)).writeAndFlush(any());
     }

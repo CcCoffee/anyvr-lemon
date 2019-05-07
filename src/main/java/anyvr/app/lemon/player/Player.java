@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 public class Player {
+    private final Object lock = new Object();
     private final Channel channel;
     private final UUID playerId;
     private final OpusDecoder opusDecoder;

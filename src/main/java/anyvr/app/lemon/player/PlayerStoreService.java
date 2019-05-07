@@ -47,7 +47,7 @@ public class PlayerStoreService {
     }
 
     public void sendMessageToOtherPlayer(final UUID playerId, final Spec.PlayerVoice playerVoice) {
-        playerStore.findAnotherPlayer(playerId)
+        playerStore.findOtherPlayer(playerId)
                 .ifPresent((Player currentPlayer) ->
                         currentPlayer.getChannel().writeAndFlush(playerVoice)
                 );

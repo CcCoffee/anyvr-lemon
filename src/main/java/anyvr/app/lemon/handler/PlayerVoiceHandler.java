@@ -1,5 +1,6 @@
 package anyvr.app.lemon.handler;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -34,13 +35,19 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
     }
 
     @Override
-    public void channelRead0(final ChannelHandlerContext ctx, final Spec.PlayerVoice playerVoice) throws Exception {
+    public void channelRead0(final ChannelHandlerContext ctx, final Spec.PlayerVoice playerVoice) {
         logger.info("UUID: " + playerVoice.getUuid());
         logger.info("Audio: " + Arrays.toString(playerVoice.getVoice().toByteArray()));
 
         UUID playerId = UUID.fromString(playerVoice.getUuid());
 
-        Player player = playerStoreService.getPlayer(playerId, ctx.channel());
+        Player player;
+        try {
+            player = playerStoreService.getPlayer(playerId, ctx.channel());
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            return;
+        }
 
         if (!isUdpInSequence(playerVoice.getDatagramOrderId(), player)) {
             return;
