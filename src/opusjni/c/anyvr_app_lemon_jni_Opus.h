@@ -33,22 +33,6 @@ JNIEXPORT void JNICALL Java_anyvr_app_lemon_jni_Opus_decoder_1destroy
 
 /*
  * Class:     anyvr_app_lemon_jni_Opus
- * Method:    decoder_get_nb_samples
- * Signature: (J[BII)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_decoder_1get_1nb_1samples
-  (JNIEnv *, jclass, jlong, jbyteArray, jint, jint);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
- * Method:    decoder_get_size
- * Signature: (I)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_decoder_1get_1size
-  (JNIEnv *, jclass, jint);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
  * Method:    encode
  * Signature: (J[BII[BII)I
  */
@@ -97,46 +81,6 @@ JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1get_1complexity
 
 /*
  * Class:     anyvr_app_lemon_jni_Opus
- * Method:    encoder_get_dtx
- * Signature: (J)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1get_1dtx
-  (JNIEnv *, jclass, jlong);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
- * Method:    encoder_get_inband_fec
- * Signature: (J)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1get_1inband_1fec
-  (JNIEnv *, jclass, jlong);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
- * Method:    encoder_get_size
- * Signature: (I)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1get_1size
-  (JNIEnv *, jclass, jint);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
- * Method:    encoder_get_vbr
- * Signature: (J)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1get_1vbr
-  (JNIEnv *, jclass, jlong);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
- * Method:    encoder_get_vbr_constraint
- * Signature: (J)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1get_1vbr_1constraint
-  (JNIEnv *, jclass, jlong);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
  * Method:    encoder_set_bandwidth
  * Signature: (JI)I
  */
@@ -161,30 +105,6 @@ JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1set_1complexity
 
 /*
  * Class:     anyvr_app_lemon_jni_Opus
- * Method:    encoder_set_dtx
- * Signature: (JI)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1set_1dtx
-  (JNIEnv *, jclass, jlong, jint);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
- * Method:    encoder_set_force_channels
- * Signature: (JI)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1set_1force_1channels
-  (JNIEnv *, jclass, jlong, jint);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
- * Method:    encoder_set_inband_fec
- * Signature: (JI)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1set_1inband_1fec
-  (JNIEnv *, jclass, jlong, jint);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
  * Method:    encoder_set_max_bandwidth
  * Signature: (JI)I
  */
@@ -198,46 +118,6 @@ JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1set_1max_1bandwidt
  */
 JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1set_1packet_1loss_1perc
   (JNIEnv *, jclass, jlong, jint);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
- * Method:    encoder_set_vbr
- * Signature: (JI)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1set_1vbr
-  (JNIEnv *, jclass, jlong, jint);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
- * Method:    encoder_set_vbr_constraint
- * Signature: (JI)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1set_1vbr_1constraint
-  (JNIEnv *, jclass, jlong, jint);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
- * Method:    packet_get_bandwidth
- * Signature: ([BI)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_packet_1get_1bandwidth
-  (JNIEnv *, jclass, jbyteArray, jint);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
- * Method:    packet_get_nb_channels
- * Signature: ([BI)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_packet_1get_1nb_1channels
-  (JNIEnv *, jclass, jbyteArray, jint);
-
-/*
- * Class:     anyvr_app_lemon_jni_Opus
- * Method:    packet_get_nb_frames
- * Signature: ([BII)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_packet_1get_1nb_1frames
-  (JNIEnv *, jclass, jbyteArray, jint, jint);
 
 #ifdef __cplusplus
 }
