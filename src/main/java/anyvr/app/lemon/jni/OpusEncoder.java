@@ -25,7 +25,7 @@ public class OpusEncoder {
 
     public byte[] encode(byte[] input) {
         byte[] output = new byte[MAX_PACKET_SIZE];
-        final int packageLength = Opus.encode(encoder, input, 0, FRAME_SIZE, output, 0, output.length);
+        int packageLength = Opus.encode(encoder, input, 0, FRAME_SIZE, output, 0, output.length);
         return Arrays.copyOfRange(output, 0, packageLength);
     }
 

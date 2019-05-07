@@ -38,10 +38,10 @@ public class PlayerStoreService {
     }
 
     private Player createNewPlayer(final UUID playerId, final Channel channel) throws IOException {
-        final OpusDecoder opusDecoder = new OpusDecoder();
-        final String voiceFileName = VoiceFileNameUtils.voiceFileName(voiceFilePath, playerId);
-        final Path fileOutput = Paths.get(voiceFileName);
-        final OutputStream outputStream = Files.newOutputStream(fileOutput);
+        OpusDecoder opusDecoder = new OpusDecoder();
+        String voiceFileName = VoiceFileNameUtils.voiceFileName(voiceFilePath, playerId);
+        Path fileOutput = Paths.get(voiceFileName);
+        OutputStream outputStream = Files.newOutputStream(fileOutput);
 
         return new Player(channel, playerId, opusDecoder, outputStream, voiceFileName);
     }

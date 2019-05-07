@@ -28,7 +28,7 @@ public class MixingVoiceFilesTest {
     }
 
     @Test
-    public void test() throws IOException {
+    public void mixVoiceFile() throws IOException {
 
         final byte[] exptectedSum = { 0, 3, 6, 6 };
         final MixingVoiceFiles mixingVoiceFiles = new MixingVoiceFiles(path);
@@ -53,7 +53,7 @@ public class MixingVoiceFilesTest {
         final Player playerOne = new Player(null, playerOneUuid, null, playerOneOutput, playerOneFileName);
         final Player playerTwo = new Player(null, playerTwoUuid, null, playerTwoOutput, playerTwoFileName);
 
-        mixingVoiceFiles.mixVoice(playerOne, playerTwo);
+        mixingVoiceFiles.mixVoiceFile(playerOne, playerTwo);
 
         Path mixingFile = Paths.get(VoiceFileNameUtils.mixVoiceFileName(path, playerOne.getPlayerId(), playerTwo.getPlayerId()));
         InputStream mixingInputStream = Files.newInputStream(mixingFile);

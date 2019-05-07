@@ -14,23 +14,30 @@ import com.google.common.primitives.Shorts;
 
 public class MixingVoiceFiles {
 
-    private String path;
+    private String voicePath;
 
-    public MixingVoiceFiles(final String path) {
-        this.path = path;
+    public MixingVoiceFiles(final String voicePath) {
+        this.voicePath = voicePath;
     }
 
-    public void mixVoice(final Player playerOne, final Player playerTwo) throws IOException {
+    public void mixVoiceFile(final Player playerOne, final Player playerTwo) throws IOException {
 
-        Path playerOneFile = Paths.get(voiceFileName(path, playerOne.getPlayerId()));
-        Path playerTwoFile = Paths.get(voiceFileName(path, playerTwo.getPlayerId()));
-        Path outputFile = Paths.get(VoiceFileNameUtils.mixVoiceFileName(path, playerOne.getPlayerId(), playerTwo.getPlayerId()));
+        Path playerOneFile = Paths.get(voiceFileName(voicePath, playerOne.getPlayerId()));
+        Path playerTwoFile = Paths.get(voiceFileName(voicePath, playerTwo.getPlayerId()));
+        Path outputFile = Paths.get(VoiceFileNameUtils.mixVoiceFileName(voicePath, playerOne.getPlayerId(), playerTwo.getPlayerId()));
 
         InputStream playerOneStream = Files.newInputStream(playerOneFile);
         InputStream playerTwoStream = Files.newInputStream(playerTwoFile);
+        OutputStream mixingStream = Files.newOutputStream(outputFile);
 
-        OutputStream outputStream = Files.newOutputStream(outputFile);
-        for (; ; ) {
+        mix(playerOneStream, playerTwoStream, mixingStream);
+
+        mixingStream.close();
+    }
+
+    private void mix(InputStream playerOneStream, InputStream playerTwoStream, OutputStream mixingStream) throws IOException {
+
+        while(true) {
 
             final byte[] playerOneBytes = new byte[2]; //16 Bit pcm
             final byte[] playerTwoBytes = new byte[2]; //16 Bit pcm
@@ -53,8 +60,8 @@ public class MixingVoiceFiles {
 
             final byte[] sumInBytes = Shorts.toByteArray(sum);
 
-            outputStream.write(sumInBytes, 0, sumInBytes.length);
+            mixingStream.write(sumInBytes, 0, sumInBytes.length);
         }
-        outputStream.close();
+        mixingStream.close();
     }
 }
