@@ -7,10 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import anyvr.Spec;
-import anyvr.app.lemon.Player;
-import anyvr.app.lemon.PlayerStore;
-import anyvr.app.lemon.PlayerVoiceService;
-import anyvr.app.lemon.VoiceFileWriter;
+import anyvr.app.lemon.player.Player;
+import anyvr.app.lemon.player.PlayerStore;
+import anyvr.app.lemon.player.PlayerStoreService;
+import anyvr.app.lemon.voiceFile.VoiceFileWriter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -20,11 +20,11 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
     private final PlayerStore playerStore;
     private final Object lockDatagramId = new Object();
     private final VoiceFileWriter voiceFileWriter;
-    private final PlayerVoiceService playerVoiceService;
+    private final PlayerStoreService playerStoreService;
 
     public PlayerVoiceHandler(String voiceFilePath, PlayerStore playerStore, VoiceFileWriter voiceFileWriter) {
         this.playerStore = playerStore;
-        this.playerVoiceService = new PlayerVoiceService(playerStore, voiceFilePath);
+        this.playerStoreService = new PlayerStoreService(playerStore, voiceFilePath);
         this.voiceFileWriter = voiceFileWriter;
     }
 
@@ -40,7 +40,7 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
 
         UUID playerId = UUID.fromString(playerVoice.getUuid());
 
-        Player player = playerVoiceService.getPlayer(playerId, ctx.channel());
+        Player player = playerStoreService.getPlayer(playerId, ctx.channel());
 
         if (!isUdpInSequence(playerVoice.getDatagramOrderId(), player)) {
             return;
@@ -49,7 +49,7 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
         voiceFileWriter.checkIfHaveToFillTheGap(player, playerVoice);
         voiceFileWriter.writePlayerAudioFile(player, playerVoice);
 
-        playerVoiceService.sendMessageToOtherPlayer(playerId, playerVoice); //ToDo Test
+        playerStoreService.sendMessageToOtherPlayer(playerId, playerVoice);
     }
 
     private boolean isUdpInSequence(int currentDatagrammId, Player player) {

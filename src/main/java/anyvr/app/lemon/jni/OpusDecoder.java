@@ -4,8 +4,6 @@ import static anyvr.app.lemon.jni.OpusConf.*;
 
 import java.util.Arrays;
 
-import anyvr.app.lemon.OpusException;
-
 public class OpusDecoder {
     private static final int MAX_FRAME_SIZE = 2 * FRAME_SIZE;
 

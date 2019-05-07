@@ -75,39 +75,7 @@ JNIEXPORT jlong JNICALL Java_anyvr_app_lemon_jni_Opus_decoder_1create(JNIEnv *en
  */
 JNIEXPORT void JNICALL Java_anyvr_app_lemon_jni_Opus_decoder_1destroy(JNIEnv *env, jclass clazz, jlong decoder)
 {
-opus_decoder_destroy((OpusDecoder *)(intptr_t)decoder);
-}
-
-/*
- * Class:     Opus
- * Method:    decoder_get_nb_samples
- * Signature: (J[BII)I
- */
-JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_decoder_1get_1nb_1samples(JNIEnv *env, jclass clazz, jlong decoder, jbyteArray jni_packet, jint offset,
-                                                                               jint length)
-{
-    int ret;
-
-    if (jni_packet)
-    {
-        jbyte *native_packet = (*env)->GetPrimitiveArrayCritical(env, jni_packet, NULL);
-
-        if (native_packet)
-        {
-            ret = opus_decoder_get_nb_samples(
-                    (OpusDecoder *)(intptr_t)decoder,
-                    (unsigned char *)(native_packet + offset),
-                    length);
-            (*env)->ReleasePrimitiveArrayCritical(
-                    env,
-                    jni_packet, native_packet, JNI_ABORT);
-        }
-        else
-            ret = OPUS_ALLOC_FAIL;
-    }
-    else
-        ret = OPUS_BAD_ARG;
-    return ret;
+    opus_decoder_destroy((OpusDecoder *)(intptr_t)decoder);
 }
 
 /*
@@ -129,7 +97,7 @@ JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encode(JNIEnv *env, jclass 
                                                             jint input_offset, jint input_frame_size, jbyteArray output,
                                                             jint output_offset, jint output_length)
 {
-    int ret;
+    int opus_status;
 
     if (input && output)
     {
@@ -137,30 +105,30 @@ JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encode(JNIEnv *env, jclass 
 
         if (native_input)
         {
-            jbyte *output_ = (*env)->GetPrimitiveArrayCritical(env, output, 0);
+            jbyte *native_output = (*env)->GetPrimitiveArrayCritical(env, output, 0);
 
-            if (output_)
+            if (native_output)
             {
-                ret = opus_encode(
+                opus_status = opus_encode(
                         (OpusEncoder *)(intptr_t)encoder,
                         (opus_int16 *)(native_input + input_offset),
                         input_frame_size,
-                        (unsigned char *)(output_ + output_offset),
+                        (unsigned char *)(native_output + output_offset),
                         output_length);
-                (*env)->ReleasePrimitiveArrayCritical(env, output, output_, 0);
+                (*env)->ReleasePrimitiveArrayCritical(env, output, native_output, 0);
             }
             else
-                ret = OPUS_ALLOC_FAIL;
+                opus_status = OPUS_ALLOC_FAIL;
             (*env)->ReleasePrimitiveArrayCritical(
                     env,
                     input, native_input, JNI_ABORT);
         }
         else
-            ret = OPUS_ALLOC_FAIL;
+            opus_status = OPUS_ALLOC_FAIL;
     }
     else
-        ret = OPUS_BAD_ARG;
-    return ret;
+        opus_status = OPUS_BAD_ARG;
+    return opus_status;
 }
 
 /*
@@ -185,7 +153,7 @@ JNIEXPORT jlong JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1create(JNIEnv *en
  */
 JNIEXPORT void JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1destroy(JNIEnv *env, jclass clazz, jlong encoder)
 {
-opus_encoder_destroy((OpusEncoder *)(intptr_t)encoder);
+    opus_encoder_destroy((OpusEncoder *)(intptr_t)encoder);
 }
 
 /*
@@ -197,7 +165,7 @@ JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1get_1bandwidth(JNI
 {
     opus_int32 x;
     int ret = opus_encoder_ctl(
-    (OpusEncoder *)(intptr_t)encoder,
+            (OpusEncoder *)(intptr_t)encoder,
             OPUS_GET_BANDWIDTH(&x));
 
     return (OPUS_OK == ret) ? x : ret;
@@ -212,7 +180,7 @@ JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1get_1bitrate(JNIEn
 {
     opus_int32 x;
     int ret = opus_encoder_ctl(
-    (OpusEncoder *)(intptr_t)encoder,
+            (OpusEncoder *)(intptr_t)encoder,
             OPUS_GET_BITRATE(&x));
 
     return (OPUS_OK == ret) ? x : ret;
@@ -227,7 +195,7 @@ JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1get_1complexity(JN
 {
     opus_int32 x;
     int ret = opus_encoder_ctl(
-    (OpusEncoder *)(intptr_t)encoder,
+            (OpusEncoder *)(intptr_t)encoder,
             OPUS_GET_COMPLEXITY(&x));
 
     return (OPUS_OK == ret) ? x : ret;
@@ -242,7 +210,7 @@ JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1get_1vbr_1constrai
 {
     opus_int32 x;
     int ret = opus_encoder_ctl(
-    (OpusEncoder *)(intptr_t)encoder,
+            (OpusEncoder *)(intptr_t)encoder,
             OPUS_GET_VBR_CONSTRAINT(&x));
 
     return (OPUS_OK == ret) ? x : ret;
@@ -311,9 +279,9 @@ JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1set_1packet_1loss_
  */
 JNIEXPORT jint JNICALL Java_anyvr_app_lemon_jni_Opus_encoder_1set_1max_1bandwidth(JNIEnv *env, jclass clazz, jlong encoder, jint maxBandwidth)
 {
-	opus_int32 x = maxBandwidth;
+    opus_int32 x = maxBandwidth;
 
-	return opus_encoder_ctl(
-		(OpusEncoder *)(intptr_t)encoder,
-		OPUS_SET_MAX_BANDWIDTH(x));
+    return opus_encoder_ctl(
+            (OpusEncoder *)(intptr_t)encoder,
+            OPUS_SET_MAX_BANDWIDTH(x));
 }

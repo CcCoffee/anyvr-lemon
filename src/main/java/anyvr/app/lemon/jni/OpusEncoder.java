@@ -6,8 +6,6 @@ import static anyvr.app.lemon.jni.OpusConf.SAMPLE_RATE;
 
 import java.util.Arrays;
 
-import anyvr.app.lemon.OpusException;
-
 public class OpusEncoder {
     private static final int MAX_PACKET_SIZE = FRAME_SIZE * 3;
     private final long encoder;
