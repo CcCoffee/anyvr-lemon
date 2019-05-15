@@ -10,7 +10,7 @@ plugins {
 repositories {
     jcenter()
     maven {
-        url myMavenRepoReadUrl
+        url anyvrMavenRepoUrl
     }
 }
 
@@ -61,6 +61,7 @@ task copyOpusNativeLib(type: Copy) {
 }
 
 test {
+    useJUnitPlatform()
     systemProperty "java.library.path", "/Users/josef/Development/anyvr/anyvr-lemon/libs/"
 }
 
@@ -118,3 +119,10 @@ model {
 }
 build.dependsOn 'copyOpusNativeLib'
 copyOpusNativeLib.mustRunAfter 'opusjniSharedLibrary'
+
+task deleteFiles(type: Exec) {
+    commandLine 'sh', './removeTestFiles.sh'
+}
+
+deleteFiles.mustRunAfter 'test'
+copyOpusNativeLib.dependsOn 'deleteFiles'
