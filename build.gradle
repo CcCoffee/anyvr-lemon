@@ -125,4 +125,5 @@ task deleteFiles(type: Exec) {
 }
 
 deleteFiles.mustRunAfter 'test'
-copyOpusNativeLib.dependsOn 'deleteFiles'
+test.dependsOn 'copyOpusNativeLib'
+//copyOpusNativeLib.dependsOn 'deleteFiles'
