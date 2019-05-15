@@ -5,6 +5,10 @@ dist: xenial
 addons:
   ssh_known_hosts: 159.89.19.236
 
+branches:
+  only:
+    - master
+
 services:
   - docker
 
