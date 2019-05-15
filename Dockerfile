@@ -10,11 +10,9 @@ RUN apt-get update && apt-get install -y git autoconf automake libtool gcc make 
 USER gradle
 COPY --chown=gradle:gradle . /app
 WORKDIR /app
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 ENV LD_LIBRARY_PATH /app/libs:/usr/local/lib
 RUN mkdir -p tests
-RUN gradle clean build --info
-
+RUN gradle build
 
 FROM openjdk:11
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
