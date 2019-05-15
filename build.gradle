@@ -62,7 +62,7 @@ task copyOpusNativeLib(type: Copy) {
 
 test {
     useJUnitPlatform()
-    systemProperty "java.library.path", "/Users/josef/Development/anyvr/anyvr-lemon/libs/"
+    systemProperty "java.library.path", "libs/"
 }
 
 model {
