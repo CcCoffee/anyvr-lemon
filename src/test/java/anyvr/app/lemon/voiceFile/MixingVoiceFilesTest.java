@@ -70,9 +70,4 @@ public class MixingVoiceFilesTest {
             }
         }
     }
-
-    @Test
-    public void test55() {
-        assertTrue(true);
-    }
 }
