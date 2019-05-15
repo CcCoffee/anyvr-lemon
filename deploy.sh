@@ -8,6 +8,7 @@ if [ "$(docker ps -aq -f name=anyvr-lemon)" ]; then
         echo "rm anyvr-lemon"
         docker rm anyvr-lemon
         docker run -d --name anyvr-lemon -p 7000:7000/udp -v /home/anyvr/logs/anyvr-lemon:/app/logs $1
+        echo "Docker run anyvr-lemon"
 else
         docker run -d --name anyvr-lemon -p 7000:7000/udp -v /home/anyvr/logs/anyvr-lemon:/app/logs $1
 fi
