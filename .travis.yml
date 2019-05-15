@@ -5,16 +5,12 @@ dist: xenial
 addons:
   ssh_known_hosts: 159.89.19.236
 
-#env:
-#  global:
-#    - PATH=$PATH:$HOME/:local/bin
-
 services:
   - docker
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_5dfb2fe76626_key -iv $encrypted_5dfb2fe76626_iv -in travis_key.enc -out ~/.ssh/travis_key -d
-  - chmod 400 ~/.ssh/travis_key
+  - chmod 600 ~/.ssh/travis_key
   - git submodule update --init
   - pip install --user awscli
   - eval $(aws ecr get-login --no-include-email --region eu-central-1)

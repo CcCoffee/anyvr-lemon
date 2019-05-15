@@ -23,4 +23,4 @@ WORKDIR /app
 COPY --from=build /app/build/libs/anyvr-lemon.jar /app/anyvr-lemon.jar
 COPY --from=build /app/libs/libopusjni.so /app/libs/libopusjni.so
 COPY --from=build /usr/local/lib/* /usr/local/lib/
-ENTRYPOINT ["java","-Xmx300M","-Xms20M","-jar","anyvr-lemon.jar", "0.0.0.0", "7000"]
+ENTRYPOINT ["java","-Xmx200M","-Xms20M","-jar","anyvr-lemon.jar", "0.0.0.0", "7000"]
