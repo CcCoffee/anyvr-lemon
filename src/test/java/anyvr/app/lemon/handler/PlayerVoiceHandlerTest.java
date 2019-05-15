@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -183,7 +184,7 @@ public class PlayerVoiceHandlerTest {
     }
 
     private void purgeFiles(File dir) {
-        for (File file: dir.listFiles()) {
+        for (File file: Objects.requireNonNull(dir.listFiles())) {
             if (!file.isDirectory()) {
                 file.delete();
             }

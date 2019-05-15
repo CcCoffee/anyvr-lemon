@@ -12,7 +12,6 @@ COPY --chown=gradle:gradle . /app
 WORKDIR /app
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 ENV LD_LIBRARY_PATH /usr/local/lib
-RUN ls /app/libs
 RUN gradle clean build --info
 
 

@@ -73,6 +73,6 @@ public class MixingVoiceFilesTest {
 
     @Test
     public void test55() {
-        //assertTrue(false);
+        assertTrue(true);
     }
 }
