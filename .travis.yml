@@ -19,7 +19,5 @@ before_install:
   - pip install --user awscli
   - eval $(aws ecr get-login --no-include-email --region eu-central-1)
 
-install: ./buildDockerImage.sh
-
-deploy:
-  - ssh -i ~/.ssh/travis_key anyvr@159.89.19.236 "bash -s" < deploy.sh "$AWS_DOCKER_REGISTRY/anyvr-lemon:$TRAVIS_BUILD_ID"
+install:
+  - ./buildDockerImage.sh
