@@ -12,8 +12,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import anyvr.app.lemon.AudioSamplesHelper;
-import anyvr.app.lemon.jni.Opus;
+import anyvr.app.lemon.tools.AudioSamplesHelper;
 
 public class OpusTest {
     private static final int OPUS_BAD_ARG = -1;

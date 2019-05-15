@@ -3,7 +3,7 @@ package anyvr.app.lemon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.netty.udp.UdpServerChannel;
+import anyvr.app.lemon.netty.UdpServerChannel;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.DefaultEventLoop;
 

@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +26,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import anyvr.Spec;
-import anyvr.app.lemon.AudioSamplesHelper;
+import anyvr.app.lemon.tools.AudioSamplesHelper;
 import anyvr.app.lemon.player.Player;
 import anyvr.app.lemon.player.PlayerStore;
 import anyvr.app.lemon.voiceFile.VoiceFileWriter;
@@ -183,7 +184,7 @@ public class PlayerVoiceHandlerTest {
     }
 
     private void purgeFiles(File dir) {
-        for (File file: dir.listFiles()) {
+        for (File file: Objects.requireNonNull(dir.listFiles())) {
             if (!file.isDirectory()) {
                 file.delete();
             }

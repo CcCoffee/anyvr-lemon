@@ -3,10 +3,12 @@ package anyvr.app.lemon.jni;
 public class Opus {
 
     static {
+        System.out.println("*** java.library.path: " + System.getProperty("java.library.path"));
         try {
             System.loadLibrary("opusjni");
         } catch (Error | Exception e) {
-            e.printStackTrace();
+            System.out.println("***********************************************************************************");
+            System.out.println("*** Failed to load JNI bridge library: " + e.toString());
         }
     }
 

@@ -1,6 +1,7 @@
 package anyvr.app.lemon.voiceFile;
 
 import static com.almondtools.conmatch.datatypes.PrimitiveArrayMatcher.byteArrayContaining;
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;

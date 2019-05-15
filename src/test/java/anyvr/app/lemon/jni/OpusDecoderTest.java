@@ -5,10 +5,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestTemplate;
 
-import anyvr.app.lemon.AudioSamplesHelper;
-import anyvr.app.lemon.jni.OpusDecoder;
+import anyvr.app.lemon.tools.AudioSamplesHelper;
 
 public class OpusDecoderTest {
 
