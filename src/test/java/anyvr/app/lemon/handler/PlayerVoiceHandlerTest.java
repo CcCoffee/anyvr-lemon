@@ -25,7 +25,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import anyvr.Spec;
-import anyvr.app.lemon.AudioSamplesHelper;
+import anyvr.app.lemon.tools.AudioSamplesHelper;
 import anyvr.app.lemon.player.Player;
 import anyvr.app.lemon.player.PlayerStore;
 import anyvr.app.lemon.voiceFile.VoiceFileWriter;

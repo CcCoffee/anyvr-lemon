@@ -1,4 +1,4 @@
-package anyvr.app.lemon;
+package anyvr.app.lemon.tools;
 
 public class AudioSamplesHelper {
 
