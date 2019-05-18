@@ -1,3 +1,3 @@
-# Installs submodules and dependencies.
+# Installs submodules
 install:
 	git submodule update --init --recursive
