@@ -5,12 +5,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Vector;
 
 import anyvr.app.lemon.player.Player;
 import io.netty.channel.Channel;
 
 public class PlayerStore {
-    private final List<Player> players = new ArrayList<>();
+    private final List<Player> players = new Vector<>();
 
     public void add(Player player) {
         players.add(player);

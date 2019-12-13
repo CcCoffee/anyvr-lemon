@@ -19,7 +19,6 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
 
     private static Logger logger = LogManager.getLogger(PlayerVoiceHandler.class);
     private final PlayerStore playerStore;
-    private final Object lockDatagramId = new Object();
     private final VoiceFileWriter voiceFileWriter;
     private final PlayerStoreService playerStoreService;
 
@@ -60,13 +59,11 @@ public class PlayerVoiceHandler extends SimpleChannelInboundHandler<Spec.PlayerV
     }
 
     private boolean isUdpInSequence(int currentDatagrammId, Player player) {
-        synchronized (lockDatagramId) {
-            if (currentDatagrammId > player.getLastDatagramId()) {
-                player.setLastDatagramId(currentDatagrammId);
-                return true;
-            }
-            return false;
+        if (currentDatagrammId > player.getLastDatagramId()) {
+            player.setLastDatagramId(currentDatagrammId);
+            return true;
         }
+        return false;
     }
 
     @Override
