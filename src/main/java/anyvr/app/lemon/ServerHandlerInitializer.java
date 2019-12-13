@@ -24,11 +24,13 @@ public class ServerHandlerInitializer extends ChannelInitializer<Channel> {
     protected void initChannel(Channel ch) throws Exception {
         ChannelPipeline p = ch.pipeline();
 
+        //Inbound
         p.addLast(new ReadTimeoutHandler(READ_TIME_OUT_IN_SECONDS));
         p.addLast(new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, 10000, 0, 4, 0, 4, true));
         p.addLast(new ProtobufDecoder(Spec.PlayerVoice.getDefaultInstance()));
         p.addLast(new PlayerVoiceHandler(VOICE_FILE_PATH, new PlayerStore(), new VoiceFileWriter()));
 
+        //Outbound Traffic
         p.addLast(new ProtobufIntLengthPrepender());
         p.addLast(new ProtobufEncoder());
     }
